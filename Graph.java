@@ -16,23 +16,28 @@ public class Graph extends JPanel {
 	
 	private final int GRID_NUMBER = 19;  //23
 	private final int GRID_CENTER = (GRID_NUMBER + 1) / 2;
+	private final int MARGIN=40;
+	
 	
 	private int grid_width;
 	private int grid_height;
+	
+	private Graphics2D g2;
+	
 	
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);
 		
-		Graphics2D g2 = (Graphics2D) g;
+		this.g2 = (Graphics2D) g;
 		
-		paintGraph(g2);
+		paintGraph();
 		
 	}
 	
-	private void paintGraph(Graphics2D g2) {
-		grid_width = (this.getWidth() - 40) / GRID_NUMBER;
-		grid_height = (this.getHeight() - 40) / GRID_NUMBER;
+	private void paintGraph() {
+		grid_width = (this.getWidth() - MARGIN) / GRID_NUMBER;
+		grid_height = (this.getHeight() - MARGIN) / GRID_NUMBER;
 		
 		HlavniSidlo s = null;
 		
@@ -41,16 +46,35 @@ public class Graph extends JPanel {
 		
 		g2.translate(20, 20);		
 		
-		Rectangle2D background = new Rectangle2D.Double(0, 0, this.getWidth()-40, this.getHeight()-40);
+		Rectangle2D background = new Rectangle2D.Double(0, 0, this.getWidth()-MARGIN, this.getHeight()-MARGIN);
 		
 		g2.setColor(Color.BLACK);
 		g2.fill(background);
 		
-		paintHlavniSidlo(g2, s);
+		paintGrid();
+		paintHlavniSidlo(s);
+	}
+	
+	/**
+	 * Nakreslí møížku pro lepší orientaci.
+	 * Ve finální verzi pøípadnì odstranit
+	 */
+	private void paintGrid() {
+		Color def= g2.getColor();
+		g2.setColor(Color.gray);
+		
+		for(int i=0;i<GRID_NUMBER-1;i++) {
+			g2.drawLine(grid_width*(i+1), 0, grid_width*(i+1), getHeight()-MARGIN);
+			g2.drawLine(0, grid_height*(i+1), getWidth()-MARGIN, grid_height*(i+1));
+		}
+		
+		
+		
+		g2.setColor(def);
 	}
 	
 
-	private void paintHlavniSidlo(Graphics2D g2, HlavniSidlo sidlo) {
+	private void paintHlavniSidlo(HlavniSidlo sidlo) {
 		int grid_width_start = grid_width * (GRID_CENTER - 1);
 		int grid_height_start = grid_height * (GRID_CENTER - 1);
 		int grid_width_end = grid_width_start + grid_width;

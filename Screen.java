@@ -13,7 +13,7 @@ public class Screen{
 		frame.pack();
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.setVisible(true);
-		frame.setMinimumSize(new Dimension(840, 640));
+		frame.setMinimumSize(new Dimension(800, 800));
 		
 		Graph g = new Graph();
 		g.setPreferredSize(new Dimension(840, 640));
