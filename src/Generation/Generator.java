@@ -50,24 +50,24 @@ public class Generator {
 
 	//prozatim hodnoty prirazene konstruktorem
     /** Width of the window the mansions are supposed to generate in */
-	private int windowWidth;
+	private int windowWidth = Visualization.minWidth;
 	/** Height of the window the mansions are supposed to generate in */
-	private int windowHeight;
+	private int windowHeight = Visualization.minHeight;
 	
 	/**
 	 * Constructor for generator. Used to get the number of mansions to generate.
 	 * @param numberOfMansions that is to be generated.
-     * @param wX width of the window
-     * @param wY height of the window
+     * //@param wX width of the window
+     * //@param wY height of the window
 	 */
-	public Generator(int numberOfMansions, int wX, int wY) {
+	public Generator(int numberOfMansions/*, int wX, int wY*/) {
 		if(numberOfMansions < 500 || numberOfMansions > 2000) {
 			throw new IllegalArgumentException("Wrong number of mansions! Please enter a number between 500 and 2000!");
 		}
 		this.numberOfMansions = numberOfMansions;
 		
-		this.windowWidth = wX;
-		this.windowHeight = wY;
+		//this.windowWidth = wX;
+		//this.windowHeight = wY;
 
         mansionsCol = new ArrayList<>(numberOfMansions + 1);
 		

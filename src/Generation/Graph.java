@@ -14,6 +14,12 @@ public class Graph extends JPanel {
 
     private static final long serialVersionUID = 1L;
 
+    private List<AMansion> toPaint;
+
+    public Graph(List<AMansion> toPaint){
+        this.toPaint = toPaint;
+    }
+
     /**
      * Painting on the screen
      * @param g 'the painter'
@@ -24,7 +30,7 @@ public class Graph extends JPanel {
 
         Graphics2D g2 = (Graphics2D) g;
 
-        paintGraph(g2);
+        paintGraph(g2, toPaint);
 
     }
 
@@ -32,10 +38,10 @@ public class Graph extends JPanel {
      * Paint the instances of mansions and HQ
      * @param g2 'the painter'
      */
-    private void paintGraph(Graphics2D g2) {
+    private void paintGraph(Graphics2D g2, List<AMansion> toPaint) {
         g2.setColor(Color.BLACK);
         g2.fillRect(0, 0, this.getWidth(), this.getHeight());
-
+/*
         List<AMansion> toPaint;
 
         if(mainTest.fromFile == null){
@@ -48,7 +54,7 @@ public class Graph extends JPanel {
         } else {
             toPaint = FileIO.importFromFile(new File(mainTest.fromFile));
         }
-
+*/
 
         g2.setColor(Color.RED);
         g2.fill(new Ellipse2D.Double((toPaint.get(0).position.getX()) - 10, (toPaint.get(0).position.getY()) - 10, 20, 20));
