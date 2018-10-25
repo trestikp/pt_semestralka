@@ -42,7 +42,12 @@ public class Generator {
 	private int numberOfMS5 = 0;
 	/** Number of mansions of size 6 */
 	private int numberOfMS6 = 0;
-	
+
+	/** Array of all mansions. */
+	private AMansion[] mansions = new AMansion[numberOfMansions]; //mozna lepsi kolekce?
+	/** The current end of @mansions */
+	private int currentMansionsEnd = 0;
+
 	//prozatim hodnoty prirazene konstruktorem
 	private int windowWidth;
 	private int windowHeight;
@@ -62,26 +67,29 @@ public class Generator {
 		
 		rand = new Random();
 		countNumberOfMansionSizes();
+		System.out.printf(pomocnejVypis());
 	}
 	
 	/**
 	 * Method generates the position of the HQ.
-	 * @param windowWidth - width of the window HQ is painted on
-	 * @param windowHeight - height of the window HQ is painted on
 	 * @return
 	 */
-	public AMansion generateHQ(/*int windowWidth, int windowHeight*/) {
+	public void generateHQ(/*int windowWidth, int windowHeight*/) {
 		int fromX = ((windowWidth / 2) - (HQ_GENERATOR_MARGIN/2));
 		//int toX = ((windowWidth / 2) + (HQ_GENERATOR_MARGIN/2));
 		int fromY = ((windowHeight / 2) - (HQ_GENERATOR_MARGIN/2));
 		//int toY = ((windowHeight / 2) + (HQ_GENERATOR_MARGIN/2));
+		HQ res = null;
 		
 		int x = rand.nextInt(HQ_GENERATOR_MARGIN + 1) + fromX;
 		int y = rand.nextInt(HQ_GENERATOR_MARGIN + 1) + fromY;
 		
 		Point2D.Double pos = new Point2D.Double(x, y);
-		
-		return new HQ(pos);
+
+		res = new HQ(pos);
+		mansions[currentMansionsEnd] = res;
+		currentMansionsEnd++;
+		//return res;
 	}
 	
 	/**
@@ -93,48 +101,63 @@ public class Generator {
 		for(int i = 0; i < numberOfMansions; i++) {
 			a = rand.nextInt(100) + 1;
 				//to si skoro rika o switch...
-			if(a <= 5) {
+			if(a <= 3) {
 				numberOfMS6++;
 				continue;
 			}
-			if(a > 5 && a <= 15) {
+			if(a > 3 && a <= 8) {
 				numberOfMS5++;
 				continue;
 			}
-			if(a > 15 && a <= 30) {
+			if(a > 8 && a <= 18) {
 				numberOfMS4++;
 				continue;
 			}
-			if(a > 30 && a <= 50) {
+			if(a > 18 && a <= 38) {
 				numberOfMS3++;
 				continue;
 			}
-			if(a > 50 && a <= 75) {
+			if(a > 38 && a <= 63) {
 				numberOfMS2++;
 				continue;
 			}
-			if(a > 75 && a <= 100) numberOfMS1++;
+			if(a > 63 && a <= 100) numberOfMS1++;
 		}
 	}
 	
-	public AMansion[] generateMansionsSize6() {
-		AMansion[] res = new AMansion[numberOfMS6];
-		Point2D pos = null;
+	public void generateMansionsSize6() {
+		//AMansion[] res = new AMansion[numberOfMS6];
+		Point2D pos = generatePosition();
 		MansionS6 mans = null;
 		
-		for(int i = 0; i < numberOfMS6; i++) {
-			pos = generatePosition();
+		for(int i = currentMansionsEnd; i < numberOfMS6; i++) {
 			mans = new MansionS6(pos);
-			//if()
+			for(int a = 0; a < currentMansionsEnd; a++){
+				if(mansions[a] instanceof HQ || mansions[a] instanceof MansionS6 || mansions[a] instanceof MansionS5){
+					if(mansions[a].getDistance(mans) < HQ_MS56_MARGIN){
+						pos = generatePosition();
+						break;
+					}
+				}
+			}
 		}
 		
-		return null;
+		//return res;
 	}
-	
+
+	/**
+	 * Generator of position.
+	 * @return
+	 */
 	private Point2D generatePosition(/*int windowWidth, int windowHeight*/) {
 		int x = rand.nextInt(windowWidth - (2 * WINDOW_MARGIN)) + WINDOW_MARGIN;
 		int y = rand.nextInt(windowHeight - (2 * WINDOW_MARGIN)) + WINDOW_MARGIN;
 		
 		return new Point2D.Double(x, y);
+	}
+
+	//pak vymazat
+	private String pomocnejVypis(){
+		return String.format("1: %s\n2: %s\n3: %s\n4: %s\n5: %s\n6: %s", numberOfMS1, numberOfMS2, numberOfMS3, numberOfMS4, numberOfMS5, numberOfMS6);
 	}
 }
