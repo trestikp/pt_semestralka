@@ -12,7 +12,9 @@ public class mainTest {
 	
 	public static void main(String [] args) {
         String fileName = null;
+        String fileName2 = null;
         List<AMansion> toPaint;
+        int distanceMatrix[][];
 	    /*
 	    if(args.length > 0){
 	        fromFile = args[0];
@@ -36,7 +38,16 @@ public class mainTest {
             System.out.println("\n Time: " + (end/1000000 -start/1000000) + "ms\n");
         }
 
+        if(fileName2 == null){
+            PathGenerator p = new PathGenerator(toPaint);
+            distanceMatrix = p.generatePaths();
+            FileIO.exportMatrix(distanceMatrix);
+        } else {
+            //dodelat importDistanceMatrix
+        }
 
+
+        FileIO.matrixResults(new File("distanceMatrix.txt"));
 
         Visualization v = new Visualization(toPaint);
         v.main(null);

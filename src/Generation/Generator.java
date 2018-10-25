@@ -50,9 +50,12 @@ public class Generator {
 
 	//prozatim hodnoty prirazene konstruktorem
     /** Width of the window the mansions are supposed to generate in */
-	private int windowWidth = Visualization.minWidth;
+	private static int windowWidth = Visualization.minWidth;
 	/** Height of the window the mansions are supposed to generate in */
-	private int windowHeight = Visualization.minHeight;
+	private static int windowHeight = Visualization.minHeight;
+
+	/** Multiplier used to count the px distance to a "real" distance */
+	public static double multiplier = Math.max(windowHeight, windowWidth) / 500;
 	
 	/**
 	 * Constructor for generator. Used to get the number of mansions to generate.
@@ -124,7 +127,7 @@ public class Generator {
 	 * Generator of position.
 	 * @return Point2D position
 	 */
-	private Point2D generatePosition(/*int windowWidth, int windowHeight*/) {
+	private Point2D generatePosition() {
 		int x = rand.nextInt(windowWidth - (2 * WINDOW_MARGIN)) + WINDOW_MARGIN;
 		int y = rand.nextInt(windowHeight - (2 * WINDOW_MARGIN)) + WINDOW_MARGIN;
 		
@@ -173,7 +176,7 @@ public class Generator {
                     j = 1;
                 }
             }
-            man = new Mansion(pos, 6);
+            man = new Mansion(pos, 6,"Mansion" + mansionsCol.size());
             mansionsCol.add(man);
         }
     }
@@ -194,7 +197,7 @@ public class Generator {
                     j = 1;
                 }
             }
-            man = new Mansion(pos, 5);
+            man = new Mansion(pos, 5,"Mansion" + mansionsCol.size());
             mansionsCol.add(man);
         }
     }
@@ -215,7 +218,7 @@ public class Generator {
                     j = 1;
                 }
             }
-            man = new Mansion(pos, 4);
+            man = new Mansion(pos, 4,"Mansion" + mansionsCol.size());
             mansionsCol.add(man);
         }
     }
@@ -236,7 +239,7 @@ public class Generator {
                     j = 1;
                 }
             }
-            man = new Mansion(pos, 3);
+            man = new Mansion(pos, 3,"Mansion" + mansionsCol.size());
             mansionsCol.add(man);
         }
     }
@@ -257,7 +260,7 @@ public class Generator {
                     j = 1;
                 }
             }
-            man = new Mansion(pos, 2);
+            man = new Mansion(pos, 2,"Mansion" + mansionsCol.size());
             mansionsCol.add(man);
         }
     }
@@ -278,7 +281,7 @@ public class Generator {
                     j = 1;
                 }
             }
-            man = new Mansion(pos, 1);
+            man = new Mansion(pos, 1,"Mansion" + mansionsCol.size());
             mansionsCol.add(man);
         }
     }
