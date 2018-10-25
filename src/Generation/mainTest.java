@@ -1,13 +1,27 @@
 package Generation;
 
-import java.awt.geom.Point2D;
-
+/**
+ * Class for main testing - propably to be removed
+ */
 public class mainTest {
+
+    public static String fromFile = null;
 	
 	public static void main(String [] args) {
-		//AMansion a = new HQ(new Point2D.Double(500, 500));
-		//System.out.println(a.position);
-		Generator g = new Generator(2000, 800, 600);
+
+	    if(args.length > 0){
+	        fromFile = args[0];
+        }
+
+        Visualization v = new Visualization();
+        v.main(null);
+
+		/*
+		for(int i = 0; i < 20; i++){
+            v = new Visualization();
+            v.main(null);
+        }*/
+
 	}
 	
 }

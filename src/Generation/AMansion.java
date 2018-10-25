@@ -25,7 +25,7 @@ public abstract class AMansion {
 	 * @param mansion
 	 * @return
 	 */
-	public double getDistance(AMansion mansion) {
+	public double getDistance(AMansion mansion) { //mela by se vyuzit pri generovani cest
 		double res = 0;
 		double x = Math.abs(this.position.getX() - mansion.position.getX());
 		double y = Math.abs(this.position.getY() - mansion.position.getY());
