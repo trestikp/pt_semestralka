@@ -62,7 +62,7 @@ public class FileIO {
             PrintWriter pw = new PrintWriter(new File("distanceMatrix.txt"));
             for(int i = 0; i < distanceMatrix.length; i++){
                 for(int j = 0; j < distanceMatrix.length; j++){
-                    pw.print(distanceMatrix[i][j] + " ; ");
+                    pw.print(distanceMatrix[i][j] + ";");
                 }
                 pw.println();
             }
@@ -72,27 +72,39 @@ public class FileIO {
         }
     }
 
-    public static void matrixResults(File f){
+    public static int[][] importMatrix(File f){
+        int[][] distanceMatrix = null;
         try{
+            int length = 0;
+            int count = 0;
             Scanner sc = new Scanner(f);
-            String line = null;
-            int count = 0, a, max = 0, counter = 0;
-            while (sc.hasNext()){
+            while(sc.hasNext()){
+                length++;
+                sc.nextLine();
+            }
+            sc.close();
+            sc = new Scanner(f);
+            distanceMatrix = new int[length][length];
+            String line;
+            String[] pLine;
+            length = 0;
+            while (sc.hasNext()) {
                 line = sc.nextLine().trim();
-                String[] pLine = line.split(";");
+                pLine = line.split(";");
                 for(int i = 0; i < pLine.length; i++){
-                    a = Integer.parseInt(pLine[i].trim());
-                    if(a != -1 || a != 0){
-                        if(a > max){
-                            max = a;
-                        }
+                    distanceMatrix[length][i] = Integer.parseInt(pLine[i]);
+                    if(Integer.parseInt(pLine[i]) > 0){
+                        count++;
                     }
                 }
-                //sc.nextLine();
+                System.out.println("Line: " + length + " - paths: " + count);
+                count = 0;
+                length++;
             }
-            System.out.println("Max: "+max);
+            sc.close();
         } catch (IOException e){
             System.out.println(e.getMessage());
         }
+        return  distanceMatrix;
     }
 }

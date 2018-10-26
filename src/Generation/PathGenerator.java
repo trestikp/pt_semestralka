@@ -1,5 +1,7 @@
 package Generation;
 
+import java.awt.*;
+import java.io.File;
 import java.util.List;
 import java.util.Random;
 
@@ -20,6 +22,11 @@ public class PathGenerator {
         prepareMatrix();
         //long end = System.nanoTime();
         //System.out.println("\n Preparation time: " + (end/1000000 - start/1000000) + "ms\n");
+        generatePaths();
+    }
+
+    public PathGenerator(File f){
+        getPathsFromFile(f);
     }
 
     private void prepareMatrix(){
@@ -37,7 +44,7 @@ public class PathGenerator {
     public int[][] generatePaths(){
         int x;
         double distance;
-        for(int j = 0; j < distanceMatrix.length/2; j++){
+        for(int j = 0; j < distanceMatrix.length; j++){
             for(int i = 0; i < 200; i++){
                 x = rand.nextInt(mansions.size());
                 if(j == x){
@@ -51,6 +58,14 @@ public class PathGenerator {
             }
         }
 
+        return distanceMatrix;
+    }
+
+    public void getPathsFromFile(File f){
+        distanceMatrix = FileIO.importMatrix(f);
+    }
+
+    public int[][] getMatrix(){
         return distanceMatrix;
     }
 }
