@@ -1,1 +1,2 @@
-a
+Ještě na tom budeme muset zapracovat... 
+Prohlídni si to a čemu nebudeš rozumnět, tak vysvětlím!! 
