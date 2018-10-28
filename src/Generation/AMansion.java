@@ -9,6 +9,12 @@ import java.awt.geom.Point2D;
  */
 public abstract class AMansion {
 	
+	
+	public static final int UNLOADING_WINDOW_TIME_IN_MIN=120;
+	
+	
+	
+	
 	/** Position of the mansion */
 	protected Point2D position;
 	

@@ -2,6 +2,9 @@ package Generation;
 
 import java.io.File;
 import java.util.List;
+import java.util.Scanner;
+
+import simulation.Simulation;
 
 /**
  * Class for main testing - propably to be removed
@@ -57,14 +60,80 @@ public class mainTest {
 
         //FileIO.matrixResults(new File("distanceMatrix.txt"));
 
-        Visualization v = new Visualization(toPaint);
-        v.main(null);
 
 		/*
 		for(int i = 0; i < 20; i++){
             v = new Visualization();
             v.main(null);
         }*/
+        
+        /*
+        //testovací prasárna
+        int[][] pole = new int[8][];
+        int[] testPole={0,4,-1,-1,-1,3,-1,-1};
+        pole[0]=testPole;
+        int[] testPole1={4,0,1,-1,2,-1,2,-1};
+        pole[1]=testPole1;
+        int[]  testPole2={-1,1,0,3,-1,4,-1,4};
+        pole[2]=testPole2;
+        int[]  testPole3={-1,-1,3,0,-1,-1,3,-1};
+        pole[3]=testPole3;
+        int[] testPole4={-1,2,-1,-1,0,3,-1,-1};
+        pole[4]=testPole4;
+        int[]  testPole5={3,-1,4,-1,3,0,5,-1};
+        pole[5]=testPole5;
+        int[]  testPole6={-1,2,-1,3,-1,5,0,2};
+        pole[6]=testPole6;
+        int[]  testPole7={-1,-1,4,-1,-1,-1,2,0};
+        pole[7]=testPole7;
+        */
+        
+        System.out.println("Zaèínám generovat cesty ze všech sídel");
+        long start = System.nanoTime();
+        PathFinder fn= new PathFinder(p.getMatrix());
+        Path[][] paths=fn.pathFinding();
+        long end = System.nanoTime();
+        
+        
+        /*
+        for(int y=0;y<paths.length;y++) {
+        	for(int x=0;x<paths.length;x++) {
+        		System.out.print("(");
+        		if(paths[y][x]!=null)
+        			if(paths[y][x].nodeIDs!=null)
+        		for(int i=0;i<paths[y][x].nodeIDs.size();i++) {
+        			if(paths[y][x]==null)System.out.print("0");
+        			else System.out.print(paths[y][x].nodeIDs.get(i)+",");
+        		}
+        		if(paths[y][x]!=null)System.out.print("["+paths[y][x].value+"]");
+        		System.out.print("),");
+        	}
+        	System.out.println();
+        }*/ 
+        
+        
+        
+        System.out.println("generování cest hotovo za: "+ (end/1000000000 -start/1000000000) +"s\\n");
+        System.out.println("----------------------------");
+        
+        Scanner sc= new Scanner(System.in);
+        /*
+        System.out.println("Zadejte èas (v ms) odpovídající jedné minutì simulace: ");
+        int simStep= sc.nextInt();
+        
+        
+        Simulation sim= new Simulation(toPaint,p.getMatrix(),simStep);
+        sim.startSimulation();
+        while(true) {
+        	
+        	
+        	
+        	
+        }*/
+        
+
+        Visualization v = new Visualization(toPaint);
+        v.main(null);
 
 	}
 	

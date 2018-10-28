@@ -83,6 +83,9 @@ public class Generator {
 		generateSize3();
 		generateSize2();
 		generateSize1();
+		
+		generateOpeningTimesInMin();
+		
 		System.out.printf(pomocnejVypis());
 		System.out.printf("\nCol: " + mansionsCol.size());//taky pomocne
 	}
@@ -121,6 +124,13 @@ public class Generator {
 		}
 	}
 
+	private void generateOpeningTimesInMin() {
+		Random r= new Random();
+		for(int i=1;i<mansionsCol.size();i++) {
+			((Mansion)mansionsCol.get(i)).openingTimeInMin=r.nextInt(720)+480;
+			}
+	}
+	
 
 
 	/**

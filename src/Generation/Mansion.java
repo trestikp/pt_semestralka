@@ -7,20 +7,35 @@ import java.awt.geom.Point2D;
  */
 public class Mansion extends AMansion{
 
+	 public static final int OPENED_TIME_IN_MIN=120;
+	   
+	
     /** Size of the mansion */
     public int size;
 
-    /** ID of the mansion */
-    public String ID;
+    //DODELAT!!!
+    /** name of the mansion */
+    public String name;
 
+    public int ID;
+  
+    
+    public int openingTimeInMin;
+    
+    public int numOfOrderedGoods=0;
+    
+    
     /**
      * Constructor filling the position and size of mansion
      * @param pos position
      * @param size size
      */
-    public Mansion(Point2D pos, int size, String ID){
+    public Mansion(Point2D pos, int size, String name){
         super(pos);
         this.size = size;
-        this.ID = ID;
+        this.name = name;
+        
+        //náhrada
+        this.ID= Integer.parseInt(name.substring(7, name.length()-1));
     }
 }

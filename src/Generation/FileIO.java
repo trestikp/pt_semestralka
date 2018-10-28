@@ -23,7 +23,7 @@ public class FileIO {
                 int size = a.size;
                 double x = a.position.getX();
                 double y = a.position.getY();
-                String ID = a.ID;
+                String ID = a.name;
                 pw.printf("%d;%d;%d;%s\n",size, (int) x, (int) y, ID);
             }
             pw.close();
