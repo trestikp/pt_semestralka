@@ -117,7 +117,7 @@ public class mainTest {
         
         Scanner sc= new Scanner(System.in);
         /*
-        System.out.println("Zadejte ï¿½as (v ms) odpovï¿½dajï¿½cï¿½ jednï¿½ minutï¿½ simulace: ");
+        System.out.println("Zadejte èas (v ms) odpovídající jedné minutì simulace: ");
         int simStep= sc.nextInt();
         
         
