@@ -50,7 +50,7 @@ public class mainTest {
             p = new PathGenerator(toPaint);
             long end = System.nanoTime();
             System.out.println("\n Generating matrix time: " + (end/1000000 -start/1000000) + "ms\n");
-            //FileIO.exportMatrix(p.getMatrix());
+            FileIO.exportMatrix(p.getDistanceMatrix(), p.getTimeMatrix());
         } else {
             long start = System.nanoTime();
             p = new PathGenerator(new File(fileName2));
@@ -67,7 +67,7 @@ public class mainTest {
             v.main(null);
         }*/
         
-
+/*
         //testovacï¿½ prasï¿½rna
         int[][] pole = new int[8][];
         int[] testPole={0,4,-1,-1,-1,3,-1,-1};
@@ -93,7 +93,7 @@ public class mainTest {
         PathFinder fn= new PathFinder(pole);
         Path[][] paths=fn.pathFinding();
         long end = System.nanoTime();
-        
+
 
         for(int y=0;y<paths.length;y++) {
         	for(int x=0;x<paths.length;x++) {
@@ -109,15 +109,15 @@ public class mainTest {
         	}
         	System.out.println();
         }
-        
+
         
         
         System.out.println("Path generation time: "+ (end/1000000000 -start/1000000000) +"s\\n");
         System.out.println("----------------------------");
-        
+ */
         Scanner sc= new Scanner(System.in);
         /*
-        System.out.println("Zadejte èas (v ms) odpovídající jedné minutì simulace: ");
+        System.out.println("Zadejte ï¿½as (v ms) odpovï¿½dajï¿½cï¿½ jednï¿½ minutï¿½ simulace: ");
         int simStep= sc.nextInt();
         
         
@@ -129,7 +129,6 @@ public class mainTest {
         	
         	
         }*/
-        
 
         Visualization v = new Visualization(toPaint);
         v.main(null);

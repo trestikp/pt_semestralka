@@ -14,6 +14,7 @@ import java.util.Scanner;
  * Class used for exporting/importing information of mansions - to be removed?
  */
 public class FileIO {
+
     public static void exportToFile(List<AMansion> col){
         try {
             PrintWriter pw = new PrintWriter(new File("vstup.txt"));
@@ -58,12 +59,12 @@ public class FileIO {
         return col;
     }
 
-    public static void exportMatrix(int distanceMatrix[][]){
+    public static void exportMatrix(int distanceMatrix[][], double timeMatrix[][]){
         try {
             PrintWriter pw = new PrintWriter(new File("distanceMatrix.txt"));
             for(int i = 0; i < distanceMatrix.length; i++){
                 for(int j = 0; j < distanceMatrix.length; j++){
-                    pw.print(distanceMatrix[i][j] + ";");
+                    pw.print(distanceMatrix[i][j] + "!" + timeMatrix[i][j] + ";");
                 }
                 pw.println();
             }
@@ -73,8 +74,9 @@ public class FileIO {
         }
     }
 
-    public static int[][] importMatrix(File f){
+    public static Pomocna importMatrix(File f){
         int[][] distanceMatrix = null;
+        double[][] timeMatrix = null;
         try{
             int length = 0;
             int count = 0;
@@ -86,15 +88,19 @@ public class FileIO {
             sc.close();
             sc = new Scanner(f);
             distanceMatrix = new int[length][length];
+            timeMatrix = new double[length][length];
             String line;
             String[] pLine;
+            String[] aLine;
             length = 0;
             while (sc.hasNext()) {
                 line = sc.nextLine().trim();
                 pLine = line.split(";");
                 for(int i = 0; i < pLine.length; i++){
-                    distanceMatrix[length][i] = Integer.parseInt(pLine[i]);
-                    if(Integer.parseInt(pLine[i]) > 0){
+                    aLine = pLine[i].split("!");
+                    distanceMatrix[length][i] = Integer.parseInt(aLine[0]);
+                    timeMatrix[length][i] = Double.parseDouble(aLine[1]);
+                    if(Integer.parseInt(aLine[0]) > 0){
                         count++;
                     }
                 }
@@ -106,6 +112,8 @@ public class FileIO {
         } catch (IOException e){
             System.out.println(e.getMessage());
         }
-        return  distanceMatrix;
+
+        Pomocna p = new Pomocna(distanceMatrix, timeMatrix);
+        return  p;
     }
 }
