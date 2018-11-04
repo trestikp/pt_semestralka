@@ -1,2 +1,3 @@
-Ještě na tom budeme muset zapracovat... 
-Prohlídni si to a čemu nebudeš rozumnět, tak vysvětlím!! 
+Časové ohodnocení cest je v sec uložené v doublu!
+100% rychlost je 120km/h
+3 typy cest - 100%, 80%, 60% rychlosti
