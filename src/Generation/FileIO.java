@@ -59,7 +59,7 @@ public class FileIO {
         return col;
     }
 
-    public static void exportMatrix(int distanceMatrix[][], double timeMatrix[][]){
+    public static void exportMatrix(int distanceMatrix[][], int timeMatrix[][]){
         try {
             PrintWriter pw = new PrintWriter(new File("distanceMatrix.txt"));
             for(int i = 0; i < distanceMatrix.length; i++){
@@ -76,7 +76,7 @@ public class FileIO {
 
     public static Pomocna importMatrix(File f){
         int[][] distanceMatrix = null;
-        double[][] timeMatrix = null;
+        int[][] timeMatrix = null;
         try{
             int length = 0;
             int count = 0;
@@ -88,7 +88,7 @@ public class FileIO {
             sc.close();
             sc = new Scanner(f);
             distanceMatrix = new int[length][length];
-            timeMatrix = new double[length][length];
+            timeMatrix = new int[length][length];
             String line;
             String[] pLine;
             String[] aLine;
@@ -99,7 +99,7 @@ public class FileIO {
                 for(int i = 0; i < pLine.length; i++){
                     aLine = pLine[i].split("!");
                     distanceMatrix[length][i] = Integer.parseInt(aLine[0]);
-                    timeMatrix[length][i] = Double.parseDouble(aLine[1]);
+                    timeMatrix[length][i] = Integer.parseInt((aLine[1]));
                     if(Integer.parseInt(aLine[0]) > 0){
                         count++;
                     }

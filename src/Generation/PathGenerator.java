@@ -10,7 +10,7 @@ public class PathGenerator {
     private int MAX_SPEED = 120;
 
     private int[][] distanceMatrix;
-    private double[][] timeMatrix;
+    private int[][] timeMatrix;
     private List<AMansion> mansions;
     private Random rand;
     private int pathType; //3 typy, 1 - 100%; 2 - 80%; 3 - 60% (speed @100% - 120km/h)
@@ -18,7 +18,7 @@ public class PathGenerator {
     public PathGenerator(List<AMansion> mans){
         this.mansions = mans;
         distanceMatrix = new int[mans.size()][mans.size()];
-        timeMatrix = new double[mans.size()][mans.size()];
+        timeMatrix = new int[mans.size()][mans.size()];
         rand = new Random();
 
         //System.out.println(distanceMatrix.length);
@@ -68,17 +68,17 @@ public class PathGenerator {
                         distanceMatrix[x][j] = (int) distance;
 
                         switch (type){
-                            case 1: timeMatrix[j][x] = (distance / MAX_SPEED) * 3600;
-                                    timeMatrix[x][j] = (distance / MAX_SPEED) * 3600;
+                            case 1: timeMatrix[j][x] = (int) Math.round((distance / MAX_SPEED) * 3600);
+                                    timeMatrix[x][j] = (int) Math.round((distance / MAX_SPEED) * 3600);
                                 break;
-                            case 2: timeMatrix[j][x] = (distance / (MAX_SPEED * 0.8)) * 3600;
-                                    timeMatrix[x][j] = (distance / (MAX_SPEED * 0.8)) * 3600;
+                            case 2: timeMatrix[j][x] = (int) Math.round((distance / (MAX_SPEED * 0.8)) * 3600);
+                                    timeMatrix[x][j] = (int) Math.round((distance / (MAX_SPEED * 0.8)) * 3600);
                                 break;
-                            case 3: timeMatrix[j][x] = (distance / (MAX_SPEED * 0.6)) * 3600;
-                                    timeMatrix[x][j] = (distance / (MAX_SPEED * 0.6)) * 3600;
+                            case 3: timeMatrix[j][x] = (int) Math.round((distance / (MAX_SPEED * 0.6)) * 3600);
+                                    timeMatrix[x][j] = (int) Math.round((distance / (MAX_SPEED * 0.6)) * 3600);
                                 break;
-                                default: timeMatrix[j][x] = (distance / MAX_SPEED) * 3600;
-                                    timeMatrix[x][j] = (distance / MAX_SPEED) * 3600;
+                                default: timeMatrix[j][x] = (int) Math.round((distance / MAX_SPEED) * 3600);
+                                    timeMatrix[x][j] = (int) Math.round((distance / MAX_SPEED) * 3600);
                         }
                     }
                 }
@@ -98,7 +98,7 @@ public class PathGenerator {
         return distanceMatrix;
     }
 
-    public double[][] getTimeMatrix(){
+    public int[][] getTimeMatrix(){
         return  timeMatrix;
     }
 

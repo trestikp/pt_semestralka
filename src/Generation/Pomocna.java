@@ -5,9 +5,9 @@ public class Pomocna {
 
 
     private int[][] distanceMatrix;
-    private double[][] timeMatrix;
+    private int[][] timeMatrix;
 
-    public Pomocna(int[][] dMatrix, double[][] tMatrix){
+    public Pomocna(int[][] dMatrix, int[][] tMatrix){
         this.distanceMatrix = dMatrix;
         this.timeMatrix = tMatrix;
     }
@@ -15,7 +15,7 @@ public class Pomocna {
         return distanceMatrix;
     }
 
-    public double[][] getTimeMatrix() {
+    public int[][] getTimeMatrix() {
         return timeMatrix;
     }
 
