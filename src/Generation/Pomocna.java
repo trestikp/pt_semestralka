@@ -18,5 +18,9 @@ public class Pomocna {
     public int[][] getTimeMatrix() {
         return timeMatrix;
     }
+    
+    public int mansionQuantity() {
+    	return distanceMatrix.length;
+    }
 
 }

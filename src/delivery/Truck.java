@@ -12,7 +12,6 @@ public class Truck {
 	public static final int MAX_LOAD = 6;
 	public static final int UNLOAD_TIME_IN_MIN = 30;
 	public static final int COST_PER_KM=25;
-	public static final int MINUTES_NEEDED_FOR_100KM=70;
 	
 	public static Queue<Truck> launchableTrucks= new LinkedList<Truck>();
 	public static LinkedList<Truck> trucksOnRoad= new LinkedList<Truck>() ;
@@ -40,6 +39,7 @@ public class Truck {
 	//TODO kalkulace souøadnic
 	//public Point2D coords
 	
+	//TODO kdyz vyjede nakladak ven, tak informuje sidla o prijati objednavky
 
 	public Truck() {
 		count_of_trucks++;
@@ -79,7 +79,7 @@ public class Truck {
 			o=o2;
 		}
 		
-		neededTimeInMin+=((double)momentalKM/100)*MINUTES_NEEDED_FOR_100KM;
+		neededTimeInMin+=((double)momentalKM/100);
 		travelExpenses+=momentalKM*COST_PER_KM;
 		
 		totalKm+=momentalKM;
@@ -95,8 +95,8 @@ public class Truck {
 		
 	}
 	private int calcKM(int pointA, int pointB) {
-		return (int)(((double)Simulation.path[pointA][pointB].value));
-	}	
+		return (int)(((double)Simulation.distancePath[pointA][pointB].value));
+	}
 	
 	
 	
@@ -118,7 +118,7 @@ public class Truck {
 	}*/
 	
 	public boolean isLoaded() {
-		return actualLoad>4||orders.size()>3;
+		return actualLoad>5||orders.size()>3;
 	}
 	
 	

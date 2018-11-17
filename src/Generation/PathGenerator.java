@@ -68,17 +68,17 @@ public class PathGenerator {
                         distanceMatrix[x][j] = (int) distance;
 
                         switch (type){
-                            case 1: timeMatrix[j][x] = (int) Math.round((distance / MAX_SPEED) * 3600);
-                                    timeMatrix[x][j] = (int) Math.round((distance / MAX_SPEED) * 3600);
-                                break;
-                            case 2: timeMatrix[j][x] = (int) Math.round((distance / (MAX_SPEED * 0.8)) * 3600);
-                                    timeMatrix[x][j] = (int) Math.round((distance / (MAX_SPEED * 0.8)) * 3600);
-                                break;
-                            case 3: timeMatrix[j][x] = (int) Math.round((distance / (MAX_SPEED * 0.6)) * 3600);
-                                    timeMatrix[x][j] = (int) Math.round((distance / (MAX_SPEED * 0.6)) * 3600);
-                                break;
-                                default: timeMatrix[j][x] = (int) Math.round((distance / MAX_SPEED) * 3600);
-                                    timeMatrix[x][j] = (int) Math.round((distance / MAX_SPEED) * 3600);
+		                    case 1: timeMatrix[j][x] = (int) Math.round((distance / MAX_SPEED) * 3600);
+		                        timeMatrix[x][j] = (int) Math.round((distance / MAX_SPEED) * 3600);
+		                        break;
+		                    case 2: timeMatrix[j][x] = (int) Math.round((distance / (MAX_SPEED * 0.8)) * 3600);
+		                    	timeMatrix[x][j] = (int) Math.round((distance / (MAX_SPEED * 0.8)) * 3600);
+                            	break;
+		                    case 3: timeMatrix[j][x] = (int) Math.round((distance / (MAX_SPEED * 0.6)) * 3600);
+                            	timeMatrix[x][j] = (int) Math.round((distance / (MAX_SPEED * 0.6)) * 3600);
+                            	break;
+		                    default: timeMatrix[j][x] = (int) Math.round((distance / MAX_SPEED) * 3600);
+		                    	timeMatrix[x][j] = (int) Math.round((distance / MAX_SPEED) * 3600);
                         }
                     }
                 }

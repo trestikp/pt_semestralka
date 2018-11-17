@@ -17,10 +17,13 @@ public class mainTest {
         String fileName = null;
         String fileName2 = null;
         List<AMansion> toPaint;
-        int numberToGenerate = 2000; //defaultne se generuje 2000 prvku, pokud se zada vstupni soubor, tak todle ignoruje a nacita ze souboru
+        int numberToGenerate = 1000; //defaultne se generuje 2000 prvku, pokud se zada vstupni soubor, tak todle ignoruje a nacita ze souboru
         PathGenerator p;
         Generator g;
 
+        //TODO Zeptat se na vstupni soubory namisto prikazove radky
+        
+        
 	    if(args.length >= 1){
 	        numberToGenerate = Integer.parseInt(args[0]);
         }
@@ -86,15 +89,20 @@ public class mainTest {
         pole[6]=testPole6;
         int[]  testPole7={-1,-1,4,-1,-1,-1,2,0};
         pole[7]=testPole7;
-
+*/
         
         System.out.println("Path generating");
         long start = System.nanoTime();
-        PathFinder fn= new PathFinder(pole);
-        Path[][] paths=fn.pathFinding();
+        PathFinder.pathFinding(p.getDistanceMatrix(),p.getTimeMatrix());
         long end = System.nanoTime();
-
-
+        System.out.println("Path generation time: "+ (end/1000000000 -start/1000000000) +"s\\n");
+        System.out.println("----------------------------");
+ 
+        
+        
+        
+        
+        /* vypis
         for(int y=0;y<paths.length;y++) {
         	for(int x=0;x<paths.length;x++) {
         		System.out.print("(");
@@ -109,29 +117,28 @@ public class mainTest {
         	}
         	System.out.println();
         }
-
+         */
+        
+       //TODO udelat uzivatelske rozhrani v cmd
         
         
-        System.out.println("Path generation time: "+ (end/1000000000 -start/1000000000) +"s\\n");
-        System.out.println("----------------------------");
- */
         Scanner sc= new Scanner(System.in);
-        /*
-        System.out.println("Zadejte �as (v ms) odpov�daj�c� jedn� minut� simulace: ");
+        System.out.println("Zadejte cas odpovidajici (v ms) odpovidajici jedne minute simulace: ");
         int simStep= sc.nextInt();
         
         
-        Simulation sim= new Simulation(toPaint,p.getMatrix(),simStep);
-        sim.startSimulation();
-        while(true) {
-        	
-        	
-        	
-        	
-        }*/
-
-        Visualization v = new Visualization(toPaint);
-        v.main(null);
+        Simulation sim= new Simulation(toPaint,new Pomocna(p.getDistanceMatrix(),p.getTimeMatrix()),
+        								PathFinder.getDistancePaths(),PathFinder.getTimePaths());
+        sim.runSimulation(simStep);
+       while(true) {
+          /* System.out.println("Ukoncit aplikaci? (Y/N)");
+           char c=sc.nextLine().charAt(0);
+           if(c=='y'||c=='Y') {
+        	   sim.endSimulation();
+        	   return;
+           }*/
+       }
+        
 
 	}
 	
