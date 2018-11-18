@@ -7,19 +7,47 @@ import java.util.List;
 public class PathFinder {
 
 	
-	private int[][] paths;
+	private static Path[][] distancePaths;
+	private static Path[][] timePaths;
 	
-	public PathFinder(int[][] pat ) {
+	private static int[][] pat;
+	private static int[][] timepat;
+	
+	
+	public static void pathFinding(int[][] pat, int[][] timepat) {
+		PathFinder.pat=pat;
+		PathFinder.timepat=timepat;
 		for(int y=0;y<pat.length;y++) {
 			for(int x=0;x<pat.length;x++) {
 				if(pat[y][x]==-1)
 				pat[y][x]=Integer.MAX_VALUE;
 			}
 		}
-		this.paths=pat;
+		Thread threadPathFinder = new Thread(new Runnable() {
+			@Override
+			public void run() {
+					try {
+	
+						System.out.println("Casova matice");
+						PathFinder.timePaths=pathFinding(timepat);
+					}
+				   catch (Exception ex) {
+					   ex.printStackTrace();
+				}
+			}
+		});
+		threadPathFinder.start();
+		
+		
+		
+		System.out.println("Distancni matice");
+		PathFinder.distancePaths=pathFinding(pat);
+		
+		while(threadPathFinder.isAlive());
 	}
 	
-	public Path[][] pathFinding() {
+	
+	private static Path[][] pathFinding(int[][] paths ) {
 		 final int size= paths.length;
 		
 		Path[][] result= new Path[size][size];
@@ -91,7 +119,18 @@ public class PathFinder {
 		
 		return result;
 	}
-	
+
+
+	public static Path[][] getDistancePaths() {
+		return distancePaths;
+	}
+
+
+
+	public static Path[][] getTimePaths() {
+		return timePaths;
+	}
+
 	
 	
 	

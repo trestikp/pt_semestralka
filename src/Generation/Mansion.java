@@ -2,13 +2,17 @@ package Generation;
 
 import java.awt.geom.Point2D;
 
+import delivery.Order;
+
 /**
  * The mansions
  */
 public class Mansion extends AMansion{
 
 	 public static final int OPENED_TIME_IN_MIN=120;
-	   
+	 public static final int DEFAULT_START_OF_OPENING_IN_SEC = 480*60;
+	 public static final int DEFAULT_END_OF_OPENING_IN_SEC = 1200*60;
+
 	
     /** Size of the mansion */
     public int size;
@@ -22,7 +26,8 @@ public class Mansion extends AMansion{
     
     public int openingTimeInMin;
     
-    public int numOfOrderedGoods=0;
+    public int numOfDeliveredGoods=0;
+    public Order actualOrder;
     
     
     /**
@@ -38,4 +43,19 @@ public class Mansion extends AMansion{
         //n�hrada
         this.ID = ID;
     }
+    
+    
+    public void orderToBeDelivered(Order o) {
+    	this.actualOrder=o;
+    	
+    }
+    
+    public void orderDelivered() {
+    	if(actualOrder==null)return;
+    	//TODO
+    	System.out.println("Objednavka c."+actualOrder.orderNum+" byla dorucena. Probiha vyklad "+actualOrder.getAmount()+" palet.");
+    	numOfDeliveredGoods+=actualOrder.getAmount();
+    	actualOrder=null;
+    }
+    
 }

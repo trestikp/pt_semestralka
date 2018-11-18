@@ -99,7 +99,7 @@ public class FileIO {
                 for(int i = 0; i < pLine.length; i++){
                     aLine = pLine[i].split("!");
                     distanceMatrix[length][i] = Integer.parseInt(aLine[0]);
-                    timeMatrix[length][i] = Integer.parseInt((aLine[1]));
+                    timeMatrix[length][i] = Integer.parseInt(aLine[1]);
                     if(Integer.parseInt(aLine[0]) > 0){
                         count++;
                     }
