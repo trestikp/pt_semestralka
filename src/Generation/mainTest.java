@@ -1,17 +1,13 @@
 package Generation;
-
-import java.io.File;
+ import java.io.File;
 import java.util.List;
 import java.util.Scanner;
-
-import simulation.Simulation;
-
-/**
+ import simulation.Simulation;
+ /**
  * Class for main testing - propably to be removed
  */
 public class mainTest {
-
-    //public static String fromFile = null;
+     //public static String fromFile = null;
 	
 	public static void main(String [] args) {
         String fileName = null;
@@ -20,8 +16,7 @@ public class mainTest {
         int numberToGenerate = 2000; //defaultne se generuje 1000 prvku, pokud se zada vstupni soubor, tak todle ignoruje a nacita ze souboru
         PathGenerator p;
         Generator g;
-
-        //TODO Zeptat se na vstupni soubory namisto prikazove radky
+         //TODO Zeptat se na vstupni soubory namisto prikazove radky
         
         
 	    if(args.length >= 1){
@@ -33,8 +28,7 @@ public class mainTest {
         if(args.length >= 3){
             fileName2 = args[2];
         }
-
-        if(fileName == null){
+         if(fileName == null){
             long start = System.nanoTime();
             g = new Generator(numberToGenerate);
             long end = System.nanoTime();
@@ -47,8 +41,7 @@ public class mainTest {
             long end = System.nanoTime();
             System.out.println("\n Reading mansions input time: " + (end/1000000 -start/1000000) + "ms\n");
         }
-
-        if(fileName2 == null){
+         if(fileName2 == null){
             long start = System.nanoTime();
             p = new PathGenerator(toPaint);
             long end = System.nanoTime();
@@ -60,103 +53,118 @@ public class mainTest {
             long end = System.nanoTime();
             System.out.println("\n Reading matrix input time: " + (end/1000000 -start/1000000) + "ms\n");
         }
-
-        //FileIO.matrixResults(new File("distanceMatrix.txt"));
-
-
-        Visualization v = new Visualization(toPaint);
+         //FileIO.matrixResults(new File("distanceMatrix.txt"));
+       
+        ///// 
+      /*   Visualization v = new Visualization(toPaint);
         v.main(null);
-
-        //int[][] distanceMarix = p.getDistanceMatrix();
+        */
+        
+         //int[][] distanceMarix = p.getDistanceMatrix();
         //int[][] timeMatrix = p.getTimeMatrix();
-
-        /* tak tohle je moje testovaci prasarna :D
+         /* tak tohle je moje testovaci prasarna :D
         for(int i = 0; i < 10; i++){
             for(int j = 0; j < 10; j++){
                 System.out.print(distanceMarix[i][j] + "    ");
             }
             System.out.println("");
         }
-
-        System.out.println("--------");
-
-        for(int i = 0; i < 10; i++){
+         System.out.println("--------");
+         for(int i = 0; i < 10; i++){
             for(int j = 0; j < 10; j++){
                 System.out.print(timeMatrix[i][j] + "    ");
             }
             System.out.println("");
         }
         */
-/*
-        //testovac� pras�rna
-        int[][] pole = new int[8][];
-        int[] testPole={0,4,-1,-1,-1,3,-1,-1};
-        pole[0]=testPole;
-        int[] testPole1={4,0,1,-1,2,-1,2,-1};
-        pole[1]=testPole1;
-        int[]  testPole2={-1,1,0,3,-1,4,-1,4};
-        pole[2]=testPole2;
-        int[]  testPole3={-1,-1,3,0,-1,-1,3,-1};
-        pole[3]=testPole3;
-        int[] testPole4={-1,2,-1,-1,0,3,-1,-1};
-        pole[4]=testPole4;
-        int[]  testPole5={3,-1,4,-1,3,0,5,-1};
-        pole[5]=testPole5;
-        int[]  testPole6={-1,2,-1,3,-1,5,0,2};
-        pole[6]=testPole6;
-        int[]  testPole7={-1,-1,4,-1,-1,-1,2,0};
-        pole[7]=testPole7;
-*/
+
+       //testovac� prasarna
+        // short[][] pole = getTestMatrix();
         
-    //    System.out.println("Path generating");
-    //    long start = System.nanoTime();
-    //    PathFinder.pathFinding(p.getDistanceMatrix(),p.getTimeMatrix());
-    //    long end = System.nanoTime();
-    //    System.out.println("Path generation time: "+ (end/1000000000 -start/1000000000) +"s\\n");
-    //    System.out.println("----------------------------");
+        
+        System.out.println("Path generating");
+        long start = System.nanoTime();
+        PathFinder.pathFinding(p.getDistanceMatrix(),p.getTimeMatrix());
+        //  PathFinder.pathFinding(pole, pole);
+        long end = System.nanoTime();
+        System.out.println("Path generation time: "+ (end/1000000000 -start/1000000000) +"s\\n");
+        System.out.println("----------------------------");
  
+       //  printBothPathArrays(); // vypis
         
         
         
         
-        /* vypis
-        for(int y=0;y<paths.length;y++) {
-        	for(int x=0;x<paths.length;x++) {
-        		System.out.print("(");
-        		if(paths[y][x]!=null)
-        			if(paths[y][x].nodeIDs!=null)
-        		for(int i=0;i<paths[y][x].nodeIDs.size();i++) {
-        			if(paths[y][x]==null)System.out.print("0");
-        			else System.out.print(paths[y][x].nodeIDs.get(i)+",");
-        		}
-        		if(paths[y][x]!=null)System.out.print("["+paths[y][x].value+"]");
-        		System.out.print("),");
-        	}
-        	System.out.println();
-        }
-         */
-        
-       //TODO udelat uzivatelske rozhrani v cmd
+       //TODO udelat uzivatelske rozhrani v cmd a rozdelit main do vice mensich method
         
         
-    //    Scanner sc= new Scanner(System.in);
-    //    System.out.println("Zadejte cas odpovidajici (v ms) odpovidajici jedne minute simulace: ");
-    //    int simStep= sc.nextInt();
-        
-        
-    //    Simulation sim= new Simulation(toPaint,new Pomocna(p.getDistanceMatrix(),p.getTimeMatrix()),
-    //    								PathFinder.getDistancePaths(),PathFinder.getTimePaths());
-    //    sim.runSimulation(simStep);
-    //   while(true) {
+        Scanner sc= new Scanner(System.in);
+        System.out.println("Zadejte cas odpovidajici (v ms) odpovidajici jedne minute simulace: ");
+        int simStep= sc.nextInt();
+        sc.close();
+        Simulation sim= new Simulation(toPaint,new Pomocna(p.getDistanceMatrix(),p.getTimeMatrix()),
+        								PathFinder.getDistancePaths(),PathFinder.getTimePaths());
+        sim.runSimulation(simStep);
+       while(true) {
           /* System.out.println("Ukoncit aplikaci? (Y/N)");
            char c=sc.nextLine().charAt(0);
            if(c=='y'||c=='Y') {
         	   sim.endSimulation();
         	   return;
            }*/
-    //   }
+       }
         
-
+ 	}
+	/**
+	 * This method serves only for testing correct function of Path generating
+	 * @return  distance matrix
+	 */
+	private static short[][] getTestMatrix(){
+			short[][] pole = new short[8][];
+	        short[] testPole={0,4,0,0,0,3,0,0};
+	       pole[0]=testPole;
+	       short[] testPole1={4,0,1,0,2,0,2,0};
+	       pole[1]=testPole1;
+	       short[]  testPole2={0,1,0,3,0,4,0,4};
+	       pole[2]=testPole2;
+	       short[]  testPole3={0,0,3,0,0,0,3,0};
+	       pole[3]=testPole3;
+	       short[] testPole4={0,2,0,0,0,3,0,0};
+	       pole[4]=testPole4;
+	       short[]  testPole5={3,0,4,0,3,0,5,0};
+	       pole[5]=testPole5;
+	       short[]  testPole6={0,2,0,3,0,5,0,2};
+	       pole[6]=testPole6;
+	       short[]  testPole7={0,0,4,0,0,0,2,0};
+	       pole[7]=testPole7;
+	       return pole;
+	}
+	
+	private static void printBothPathArrays() {
+    	printPaths(PathFinder.getDistancePaths());
+   		System.out.println();
+    	printPaths(PathFinder.getTimePaths());
+	}
+	
+	/**
+	 * Method prints Paths
+	 * @param paths desired array of Paths
+	 */
+	private static void printPaths(Path[][] paths) {
+		 for(int y=0;y<PathFinder.getTimePaths().length;y++) {
+	        	for(int x=0;x<paths.length;x++) {
+	        		System.out.print("(");
+	        		if(paths[y][x]!=null)
+	        			if(paths[y][x].getNodeIDs()!=null)
+	        		for(int i=0;i<paths[y][x].getNodeIDs().size();i++) {
+	        			if(paths[y][x]==null)System.out.print("0");
+	        			else System.out.print(paths[y][x].getNodeIDs().get(i)+",");
+	        		}
+	        		if(paths[y][x]!=null)System.out.print("["+paths[y][x].getValue()+"]");
+	        		System.out.print("),");
+	        	}
+	        	System.out.println();
+	        }
 	}
 	
 }

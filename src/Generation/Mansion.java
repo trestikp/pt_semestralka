@@ -1,6 +1,8 @@
 package Generation;
 
 import java.awt.geom.Point2D;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import delivery.Order;
 
@@ -27,8 +29,9 @@ public class Mansion extends AMansion{
     public int openingTimeInMin;
     
     public int numOfDeliveredGoods=0;
-    public Order actualOrder;
     
+    private Queue<Order> actualOrder = new LinkedList<Order>();
+    public LinkedList<Order> ordersDone= new LinkedList<Order>();
     
     /**
      * Constructor filling the position and size of mansion
@@ -46,16 +49,17 @@ public class Mansion extends AMansion{
     
     
     public void orderToBeDelivered(Order o) {
-    	this.actualOrder=o;
+    	actualOrder.add(o);
     	
-    }
+    }    
     
     public void orderDelivered() {
-    	if(actualOrder==null)return;
+    	if(actualOrder.isEmpty())return;
     	//TODO
-    	System.out.println("Objednavka c."+actualOrder.orderNum+" byla dorucena. Probiha vyklad "+actualOrder.getAmount()+" palet.");
-    	numOfDeliveredGoods+=actualOrder.getAmount();
-    	actualOrder=null;
+    	System.out.println("Objednavka c."+actualOrder.peek().orderNum+" byla dorucena. "
+    			+ "Probiha vyklad "+actualOrder.peek().getAmount()+" palet.");
+    	numOfDeliveredGoods+=actualOrder.peek().getAmount();
+    	ordersDone.add(actualOrder.poll());
     }
     
 }

@@ -1,5 +1,6 @@
 package delivery;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -14,17 +15,21 @@ public class Truck {
 	public static final int COST_PER_KM=25;
 	
 	public static Queue<Truck> launchableTrucks= new LinkedList<Truck>();
-	public static LinkedList<Truck> trucksOnRoad= new LinkedList<Truck>() ;
+	public static ArrayList<Truck> trucksOnRoad= new ArrayList<Truck>() ;
 	
 	public static int count_of_trucks=0;
+	public static int count_of_delivered_orders=0;
 	
 	public int numOfTruck;
 	
+	//TODO dodelat pro statistiky
 	private int totalKm=0;
 	private int totalTime=0;
 	
-	
+	//TODO pro statistiky
 	private int travelExpenses=0;
+	
+	
 	private int momentalKM=0;
 	private int neededTimeInMin=0;
 	
@@ -36,28 +41,40 @@ public class Truck {
 	//private boolean isInHQ=true;
 	
 	
-	//TODO kalkulace souøadnic
-	//public Point2D coords
-	
-	//TODO kdyz vyjede nakladak ven, tak informuje sidla o prijati objednavky
 
 	public Truck() {
 		count_of_trucks++;
 		numOfTruck=count_of_trucks;
+		Truck.launchableTrucks.add(this);
 	}
 	
 	
 	
 	public void addOrder(Order o) {
 		if(o==null)return;
+		if(orders.isEmpty()) {
+			momentalKM=calcKM(0, o.getSubscriber().ID);
+		}
+		else {
+			momentalKM+=calcKM(orders.getLast().getSubscriber().ID, o.getSubscriber().ID);
+		}
 		orders.add(o);
 		actualLoad+=o.getAmount();
+		o.getSubscriber().orderToBeDelivered(o);
+		
 	}
 	
-	public void completeOrder() {
-		int load=orders.poll().getAmount();
-		if(orders.isEmpty()) {
-			System.out.println("Náklaïák è."+numOfTruck+" vyložil "+load+" palet.");
+	public void completeOrder() throws Exception {
+		if(!orders.isEmpty()) {
+			Order o= orders.poll();
+			int load=o.getAmount();
+			this.actualLoad-=load;
+			count_of_delivered_orders++;
+			System.out.println("Nakladak c."+numOfTruck+" vylozil "+load+
+					" palet v sidle c."+o.getSubscriber().ID+".");
+		}
+		else {
+			throw new Exception("NO ORDERS LEFT!");
 		}
 	}
 	
@@ -70,57 +87,45 @@ public class Truck {
 		//Vypocitat potrebny cas
 		this.timeOfStartInMin=timeOfStartInMin;
 		neededTimeInMin= actualLoad*UNLOAD_TIME_IN_MIN*2;
-		Order o=orders.peek();
-		Order o2=null;
-		momentalKM+= calcKM(0, o.getSubscriber().ID);
-		for(Iterator<Order> it=orders.iterator();it.hasNext();) {
-			o2=it.next();
-			momentalKM+=calcKM(o.getSubscriber().ID, o2.getSubscriber().ID);
-			o=o2;
-		}
+		
 		
 		neededTimeInMin+=((double)momentalKM/100);
 		travelExpenses+=momentalKM*COST_PER_KM;
 		
 		totalKm+=momentalKM;
 		totalTime+=neededTimeInMin;
+
+		Truck t= Truck.launchableTrucks.poll();
+		Truck.trucksOnRoad.add(t);
 		
 		System.out.println("Nakladak è."+numOfTruck+" zacina nakladat "+actualLoad+" palet.");
-		//TODO nejdriv nalozit naklad
-		/*for(int i=0;i<road.length;i++) {
-			travelExpenses+=road[i].value*COST_PER_KM;
-		}*/
+		
 		
 		
 		
 	}
 	private int calcKM(int pointA, int pointB) {
-		return (int)(((double)Simulation.distancePath[pointA][pointB].value));
+		return (int)(((double)Simulation.distancePath[pointA][pointB].getValue()));
 	}
 	
 	
 	
 	private void returnToHQ() {
+		System.out.println("Nakladak c."+numOfTruck+" se vratil do HQ!");
 		neededTimeInMin=0;
 		timeOfStartInMin=-1;
 		actualLoad=0;
+		trucksOnRoad.remove(this);
 		launchableTrucks.add(this);
 	}
-	
-	/*public boolean isLoadable(Order or) {
-		if(actualLoad+or.getAmount()>MAX_LOAD)
-			return false;
-		else return true;
-	}*/
-	
-	/*public boolean isAvailable() {
-		return isInHQ;
-	}*/
-	
-	public boolean isLoaded() {
-		return actualLoad>5||orders.size()>3;
+
+	public boolean hasOrder() {
+		return actualLoad>0||orders.size()>0;
 	}
 	
+	public boolean canLoad(int size) {
+		return this.actualLoad+size<7;
+	}
 	
 	
 
@@ -128,18 +133,24 @@ public class Truck {
 
 		
 		//TODO
+			for(int i=0; i < trucksOnRoad.size(); i++) {
+				Truck t= trucksOnRoad.get(i);
+				if(!t.orders.isEmpty() &&
+						actualTimeInMin > t.orders.peek().getProbableTime()){
+					try {
+						t.completeOrder();
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+				}
+				else if(t.timeOfStartInMin+t.neededTimeInMin<=actualTimeInMin) {
+					t.returnToHQ();
+				}
+				
+			}
 		
-		for(Truck t: trucksOnRoad) {
-			if(t.timeOfStartInMin+t.neededTimeInMin>=actualTimeInMin)t.returnToHQ();
-			
-			int time= actualTimeInMin-t.timeOfStartInMin;
-			//TODO if()
-			
-			
-		}
 		
-		
-		
+	
 	}
 	
 	

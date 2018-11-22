@@ -16,7 +16,7 @@ public class Simulation {
 	private static final int START_OF_ORDERING=21600;
 	private static final int END_OF_ORDERING=64800;
 	
-	private int numDay=0;
+	private int numDay=1;
 	
 	
 	
@@ -42,7 +42,7 @@ public class Simulation {
 	
 	private static Pomocna matrix;
 	public static Path[][] distancePath;
-	public static Path[][] timePath;
+	public static Path[][] timePathInMin;
 	
 	private LinkedList<Order>[] ordersToDo=new LinkedList[6];
 	
@@ -64,7 +64,7 @@ public class Simulation {
 			ordersToDo[i]=new LinkedList<Order>();
 		}
 		this.distancePath=distancePaths;
-		this.timePath=timePaths;
+		this.timePathInMin=timePaths;
 	}
 	 
 
@@ -122,11 +122,18 @@ public class Simulation {
 	public void simulationStep() {
 		if(actualTimeinSec>=SECONDS_IN_DAY)nextDay();
 		
-		
-		orderTime();
+
+		if(actualTimeinSec-lastCheck>=300) {
+			orderTime();
+			//What is going on the road drivers?
+			if(!Truck.trucksOnRoad.isEmpty()) {
+				Truck.checkStateOnRoad(actualTimeinSec/60);
+			}
+		}
 		actualTimeinSec+=60;
 		
 		
+	
 		
 	}
 		
@@ -135,7 +142,7 @@ public class Simulation {
 	///je mezi 6. hodinou ranní a 6. veèerní (èas objednávek)
 	
 		//kazdych 5 minut
-		if(actualTimeinSec-lastCheck>=300) {
+			
 			lastCheck=actualTimeinSec;
 			int hou=actualTimeinSec/3600;
 			int min=(actualTimeinSec/60)%60;
@@ -164,7 +171,7 @@ public class Simulation {
 				
 				
 			
-			}
+			
 
 			
 	}
@@ -195,34 +202,47 @@ public class Simulation {
 	
 	
 	private void launchAllTrucks() {
-		for(Truck t:Truck.launchableTrucks) {
-			t.sendOnRoad(actualTimeinSec);
+		for(int i = 0; i<Truck.launchableTrucks.size(); i++) {
+			
+			if(Truck.launchableTrucks.peek().hasOrder()) {
+				Truck.launchableTrucks.peek().sendOnRoad(actualTimeinSec);
+			}
+			else {
+				break;
+			}
 		}
 	}
 
-		
-	private void splitOrders() {
+	private void splitOrders() throws IndexOutOfBoundsException  {
 		int actualTimeinMin=actualTimeinSec/60;
 		for(int index=5;index>=0;index--) {
 			
 			int loadingTime = (index+1)*Truck.UNLOAD_TIME_IN_MIN;
 			int aproxSetOnRoad= actualTimeinMin+loadingTime;
-			for(int i=ordersToDo[index].size()-1;i>=0;i--) {
+			
+			if(ordersToDo[index].isEmpty())continue;
+			for(int ind=ordersToDo[index].size()-1;ind>=0;ind--) {
 			
 				//TODO error
-				Mansion o = ordersToDo[index].get(i).getSubscriber();
-				int aproxTime= aproxSetOnRoad + timePath[0][o.ID].value;
+				if(ind >= ordersToDo[index].size()) {
+					ind = ordersToDo[index].size()-1;
+				}
+				Mansion o = ordersToDo[index].get(ind).getSubscriber();
+				//TODO jakto ze je hodnota zaporna?
+				int aproxTime= aproxSetOnRoad + timePathInMin[0][o.ID].getValue();
 				
-				System.out.println(aproxTime+"/"+(o.openingTimeInMin)
-						+"-"+(o.openingTimeInMin+Mansion.OPENED_TIME_IN_MIN));
+				//System.out.println(aproxTime+"/"+(o.openingTimeInMin)
+				//		+"-"+(o.openingTimeInMin+Mansion.OPENED_TIME_IN_MIN));
 				//counting in minutes
 				if((aproxTime) < (o.openingTimeInMin+Mansion.OPENED_TIME_IN_MIN)
-						&& o.openingTimeInMin >= aproxTime) {
-					assignOrderToTruck(ordersToDo[index].get(i));
+						&& o.openingTimeInMin <= aproxTime) {
+					//System.out.println("yes");
+					Order o1 = ordersToDo[index].get(ind);
+					assignOrderToTruck(o1);
 					LinkedList<Order> list= null;
 					//after unloading package
 					int aproxTimeWhenDone = aproxTime+loadingTime;
-					
+					o1.setProbableTime(aproxTimeWhenDone);
 					switch(index) {
 						case 5: break;
 						case 4:
@@ -238,10 +258,15 @@ public class Simulation {
 							list=additionalOrders(4, o.ID,aproxTimeWhenDone);
 							break;
 						case 0:
-							list=additionalOrders(1, o.ID,aproxTimeWhenDone);
+							list=additionalOrders(5, o.ID,aproxTimeWhenDone);
 							break;
 					}
-					list.stream().forEach(ord -> assignOrderToTruck(ord));
+					if(list!=null) {
+						list.stream().forEach(ord -> assignOrderToTruck(ord));
+					}
+					if(ordersToDo[index].isEmpty()) {
+						break;
+					}
 				}
 			}
 
@@ -264,12 +289,13 @@ public class Simulation {
 			}
 		Order o=null;
 			if(distanceXorTime) o=findClosePointWithOrder(pointID, orderIndex,distancePath, aproxtime);
-			else o=findClosePointWithOrder(pointID, orderIndex,timePath, aproxtime);
+			else o=findClosePointWithOrder(pointID, orderIndex,timePathInMin, aproxtime);
 		if(o == null) {
 			orderIndex--;
 			continue;
 		}else {
-			aproxtime+= (orderIndex+1)*Truck.UNLOAD_TIME_IN_MIN*2+timePath[pointID][o.getSubscriber().ID].value/60 ;
+			aproxtime+= (orderIndex+1)*Truck.UNLOAD_TIME_IN_MIN*2+timePathInMin[pointID][o.getSubscriber().ID].getValue() ;
+			o.setProbableTime(aproxtime);
 			pointID=o.getSubscriber().ID;
 			result.add(o);
 			neededSize-=(orderIndex+1);
@@ -277,7 +303,6 @@ public class Simulation {
 		
 
 		}
-		
 		return result;
 	}
 	
@@ -292,7 +317,7 @@ public class Simulation {
 		for(int i=velikost-1;i>=0;i--) {
 			Mansion m=ordersToDo[orderSize].get(i).getSubscriber();
 			
-			if(result==null||path[startPoint][m.ID].value<minValue) {
+			if(result==null||path[startPoint][m.ID].getValue()<minValue) {
 
 				if((aproxtime) < (m.openingTimeInMin+Mansion.OPENED_TIME_IN_MIN)
 							&& m.openingTimeInMin >= aproxtime) {
@@ -307,27 +332,27 @@ public class Simulation {
 	private void assignOrderToTruck(Order o) {
 		if(o==null)return;
 		
-		System.out.println("assigning orders");
+		//System.out.println("assigning orders");
 		if(Truck.launchableTrucks.isEmpty()) {
 			Truck t=new Truck();
-			//TODO Error
 			t.addOrder(o);
 			ordersToDo[o.getAmount()-1].remove(o);
-			Truck.launchableTrucks.add(t);
 		}
 		
 		else {
 			Truck t=null;
-			while(t==null||!Truck.launchableTrucks.isEmpty()) {
+			while(!Truck.launchableTrucks.isEmpty()) {
 				t=Truck.launchableTrucks.peek();
-				if(t.isLoaded()) {
-					t.sendOnRoad(actualTimeinSec/60);
-					Truck.launchableTrucks.poll();
-				}else {
+				if(t.canLoad(o.getAmount())) {
 					t.addOrder(o);
 					ordersToDo[o.getAmount()-1].remove(o);
+				}else {
+					t.sendOnRoad(actualTimeinSec/60);
 				}
 				
+			}
+			if(t==null) {
+				assignOrderToTruck(o);
 			}
 		}
 	}

@@ -8,17 +8,19 @@ import java.util.Random;
 public class PathGenerator {
 
     private int MAX_SPEED = 120;
-
-    private int[][] distanceMatrix;
-    private int[][] timeMatrix;
+    private int TIME=60;
+    
+    
+    private short[][] distanceMatrix;
+    private short[][] timeMatrix;
     private List<AMansion> mansions;
     private Random rand;
     private int pathType; //3 typy, 1 - 100%; 2 - 80%; 3 - 60% (speed @100% - 120km/h)
 
     public PathGenerator(List<AMansion> mans){
         this.mansions = mans;
-        distanceMatrix = new int[mans.size()][mans.size()];
-        timeMatrix = new int[mans.size()][mans.size()];
+        distanceMatrix = new short[mans.size()][mans.size()];
+        timeMatrix = new short[mans.size()][mans.size()];
         rand = new Random();
 
         //System.out.println(distanceMatrix.length);
@@ -40,14 +42,14 @@ public class PathGenerator {
                 if(i == j){
                     distanceMatrix[i][j] = 0;
                 } else {
-                    distanceMatrix[i][j] = -1;
+                    distanceMatrix[i][j] = 0;
                 }
-                timeMatrix[i][j] = -2;
+                timeMatrix[i][j] = 0;
             }
         }
     }
 
-    public int[][] generatePaths(){
+    public short[][] generatePaths(){
         int x;
         int type;
         double distance;
@@ -64,21 +66,21 @@ public class PathGenerator {
                         i--;
                     } else {
                         distance = (mansions.get(j).getDistance(mansions.get(x)) / Generator.multiplier);
-                        distanceMatrix[j][x] = (int) distance;  //mozne pomerne znatelne ztraty z pretypovani na double
-                        distanceMatrix[x][j] = (int) distance;
+                        distanceMatrix[j][x] = (short) distance;  //mozne pomerne znatelne ztraty z pretypovani na double
+                        distanceMatrix[x][j] = (short) distance;
 
                         switch (type){
-		                    case 1: timeMatrix[j][x] = (int) Math.round((distance / MAX_SPEED) * 3600);
-		                        timeMatrix[x][j] = (int) Math.round((distance / MAX_SPEED) * 3600);
+		                    case 1: timeMatrix[j][x] = (short) Math.round((distance / MAX_SPEED) * TIME);
+		                        timeMatrix[x][j] = (short) Math.round((distance / MAX_SPEED) * TIME);
 		                        break;
-		                    case 2: timeMatrix[j][x] = (int) Math.round((distance / (MAX_SPEED * 0.8)) * 3600);
-		                    	timeMatrix[x][j] = (int) Math.round((distance / (MAX_SPEED * 0.8)) * 3600);
+		                    case 2: timeMatrix[j][x] = (short) Math.round((distance / (MAX_SPEED * 0.8)) * TIME);
+		                    	timeMatrix[x][j] = (short) Math.round((distance / (MAX_SPEED * 0.8)) * TIME);
                             	break;
-		                    case 3: timeMatrix[j][x] = (int) Math.round((distance / (MAX_SPEED * 0.6)) * 3600);
-                            	timeMatrix[x][j] = (int) Math.round((distance / (MAX_SPEED * 0.6)) * 3600);
+		                    case 3: timeMatrix[j][x] = (short) Math.round((distance / (MAX_SPEED * 0.6)) * TIME);
+                            	timeMatrix[x][j] = (short) Math.round((distance / (MAX_SPEED * 0.6)) * TIME);
                             	break;
-		                    default: timeMatrix[j][x] = (int) Math.round((distance / MAX_SPEED) * 3600);
-		                    	timeMatrix[x][j] = (int) Math.round((distance / MAX_SPEED) * 3600);
+		                    default: timeMatrix[j][x] = (short) Math.round((distance / MAX_SPEED) * TIME);
+		                    	timeMatrix[x][j] = (short) Math.round((distance / MAX_SPEED) * TIME);
                         }
                     }
                 }
@@ -94,11 +96,11 @@ public class PathGenerator {
         timeMatrix = p.getTimeMatrix();
     }
 
-    public int[][] getDistanceMatrix(){
+    public short[][] getDistanceMatrix(){
         return distanceMatrix;
     }
 
-    public int[][] getTimeMatrix(){
+    public short[][] getTimeMatrix(){
         return  timeMatrix;
     }
 

@@ -1,18 +1,15 @@
 package Generation;
-
-import java.awt.geom.Point2D;
+ import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
-
-/**
+ /**
  * 
  * @author Ja
  *
  */
 public class Generator {
-
-	//Marginy mozna budou chtit zmenit podle toho jak to bude vypadat, tohle jsem navrhl jen tak co me napadlo
+ 	//Marginy mozna budou chtit zmenit podle toho jak to bude vypadat, tohle jsem navrhl jen tak co me napadlo
 	/** Margin around HQ. There can't be a mansion of size 5 or 6 within this margin. */
 	private final int MARGIN_50 = 50;
 	/** Margin around mansions of size 5 and 6. Restricting other mansions and HQ. */
@@ -44,17 +41,14 @@ public class Generator {
 	private int numberOfSize5 = 0;
 	/** Number of mansions of size 6 */
 	private int numberOfSize6 = 0;
-
-	/** Collection of the mansions */
+ 	/** Collection of the mansions */
     private List<AMansion> mansionsCol; //mozna pole rychlejsi
-
-	//prozatim hodnoty prirazene konstruktorem
+ 	//prozatim hodnoty prirazene konstruktorem
     /** Width of the window the mansions are supposed to generate in */
 	private static int windowWidth = Visualization.minWidth;
 	/** Height of the window the mansions are supposed to generate in */
 	private static int windowHeight = Visualization.minHeight;
-
-	/** Multiplier used to count the px distance to a "real" distance */
+ 	/** Multiplier used to count the px distance to a "real" distance */
 	public static double multiplier = Math.max(windowHeight, windowWidth) / 500;
 	
 	/**
@@ -71,8 +65,7 @@ public class Generator {
 		
 		//this.windowWidth = wX;
 		//this.windowHeight = wY;
-
-        mansionsCol = new ArrayList<>(numberOfMansions + 1);
+         mansionsCol = new ArrayList<>(numberOfMansions + 1);
 		
 		rand = new Random();
 		countNumberOfMansionSizes();
@@ -133,17 +126,14 @@ public class Generator {
             }
 		}
 	}
-
-	private void generateOpeningTimesInMin() {
+ 	private void generateOpeningTimesInMin() {
 		Random r= new Random();
 		for(int i=1;i<mansionsCol.size();i++) {
 			((Mansion)mansionsCol.get(i)).openingTimeInMin=r.nextInt(720)+480;
 			}
 	}
 	
-
-
-	/**
+ 	/**
 	 * Generator of position.
 	 * @return Point2D position
 	 */
@@ -153,35 +143,27 @@ public class Generator {
 		
 		return new Point2D.Double(x, y);
 	}
-
-	private double getDistance(Point2D p1, Point2D p2){
+ 	private double getDistance(Point2D p1, Point2D p2){
         double res = 0;
         double x = Math.abs(p1.getX() - p2.getX());
         double y = Math.abs(p1.getY() - p2.getY());
-
-        res = Math.sqrt((x * x) + (y * y));
-
-        return res;
+         res = Math.sqrt((x * x) + (y * y));
+         return res;
     }
-
-    /**
+     /**
      * Method generates the position of the HQ and adds it to the 0th index of List.
      */
     public void generateHQ() {
         int fromX = ((windowWidth / 2) - (HQ_GENERATOR_MARGIN/2));
         int fromY = ((windowHeight / 2) - (HQ_GENERATOR_MARGIN/2));
         HQ res = null;
-
-        int x = rand.nextInt(HQ_GENERATOR_MARGIN + 1) + fromX;
+         int x = rand.nextInt(HQ_GENERATOR_MARGIN + 1) + fromX;
         int y = rand.nextInt(HQ_GENERATOR_MARGIN + 1) + fromY;
-
-        Point2D.Double pos = new Point2D.Double(x, y);
-
-        res = new HQ(pos);
+         Point2D.Double pos = new Point2D.Double(x, y);
+         res = new HQ(pos);
         mansionsCol.add(res);
     }
-
-    /**
+     /**
      * Generate all mansions
      */
     private void generateMansions() throws Exception {
@@ -190,11 +172,9 @@ public class Generator {
         int upMargin = 20;
         int botMargin = 15;
         int size = -1;
-
-        for(int i = 0; i < numberOfMansions; i++){
+         for(int i = 0; i < numberOfMansions; i++){
             pos = generatePosition();
-
-            //je to humus, ale switch nejde, proto6e jsou to promenne
+             //je to humus, ale switch nejde, proto6e jsou to promenne
             if(i < numberOfSize6){
                 upMargin = MARGIN_50;
                 botMargin = MARGIN_25;
@@ -222,30 +202,26 @@ public class Generator {
             } else {
                 System.out.println(i);
             }
-
-            for(int j = 1; j < mansionsCol.size(); j++){
+             for(int j = 1; j < mansionsCol.size(); j++){
                 if(getDistance(pos, mansionsCol.get(0).position) < upMargin || getDistance(pos, mansionsCol.get(j).position) < botMargin) {
                     pos = generatePosition();
                     j = 1;
                 }
             }
-
-            if(size == -1){
+             if(size == -1){
                 throw new Exception("Error");
             }
             man = new Mansion(pos, size,"Mansion" + mansionsCol.size(), mansionsCol.size());
             mansionsCol.add(man);
         }
     }
-
-    /**
+     /**
      * Generates mansions of size 6.
      */
     public void generateSize6(){
         Point2D pos;
         AMansion man = null;
-
-        for(int i = 0; i < numberOfSize6; i++){
+         for(int i = 0; i < numberOfSize6; i++){
             pos = generatePosition();
             for(int j = 1; j < mansionsCol.size(); j++){
                 if(getDistance(pos, mansionsCol.get(0).position) < MARGIN_50 || getDistance(pos, mansionsCol.get(j).position) < MARGIN_25) {
@@ -257,18 +233,15 @@ public class Generator {
             mansionsCol.add(man);
         }
     }
-
-    /**
+     /**
      * Generates mansions of size 5 with the same margins as size 6.
      */
     public void generateSize5(){
         Point2D pos;
         AMansion man = null;
-
-        for(int i = 0; i < numberOfSize5; i++){
+         for(int i = 0; i < numberOfSize5; i++){
             pos = generatePosition();
-
-            for(int j = 1; j < mansionsCol.size(); j++){ //ma stejne marginy jako size 6, mohlo by se sloucit, ale pokud by jsme chteli ty marginy zmensit tak je to zvlast
+             for(int j = 1; j < mansionsCol.size(); j++){ //ma stejne marginy jako size 6, mohlo by se sloucit, ale pokud by jsme chteli ty marginy zmensit tak je to zvlast
                 if(getDistance(pos, mansionsCol.get(0).position) < MARGIN_50 || getDistance(pos, mansionsCol.get(j).position) < MARGIN_25) {
                     pos = generatePosition();
                     j = 1;
@@ -278,18 +251,15 @@ public class Generator {
             mansionsCol.add(man);
         }
     }
-
-    /**
+     /**
      * Generates mansions of size 4.
      */
     public void generateSize4(){
         Point2D pos;
         AMansion man = null;
-
-        for(int i = 0; i < numberOfSize4; i++){
+         for(int i = 0; i < numberOfSize4; i++){
             pos = generatePosition();
-
-            for(int j = 1; j < mansionsCol.size(); j++){ //ma trochu jine marginy nez size 6 a 5
+             for(int j = 1; j < mansionsCol.size(); j++){ //ma trochu jine marginy nez size 6 a 5
                 if(getDistance(pos, mansionsCol.get(0).position) < MARGIN_25 || getDistance(pos, mansionsCol.get(j).position) < MARGIN_15) {
                     pos = generatePosition();
                     j = 1;
@@ -299,18 +269,15 @@ public class Generator {
             mansionsCol.add(man);
         }
     }
-
-    /**
+     /**
      * Generates mansions of size 3 with the same margins as size 4.
      */
     public void generateSize3(){
         Point2D pos;
         AMansion man = null;
-
-        for(int i = 0; i < numberOfSize3; i++){
+         for(int i = 0; i < numberOfSize3; i++){
             pos = generatePosition();
-
-            for(int j = 1; j < mansionsCol.size(); j++){ //zase stejne marginy jako 4, dalo by se spojit
+             for(int j = 1; j < mansionsCol.size(); j++){ //zase stejne marginy jako 4, dalo by se spojit
                 if(getDistance(pos, mansionsCol.get(0).position) < MARGIN_25 || getDistance(pos, mansionsCol.get(j).position) < MARGIN_15) {
                     pos = generatePosition();
                     j = 1;
@@ -320,18 +287,15 @@ public class Generator {
             mansionsCol.add(man);
         }
     }
-
-    /**
+     /**
      * Generates mansions of size 2.
      */
     public void generateSize2(){
         Point2D pos;
         AMansion man = null;
-
-        for(int i = 0; i < numberOfSize2; i++){
+         for(int i = 0; i < numberOfSize2; i++){
             pos = generatePosition();
-
-            for(int j = 1; j < mansionsCol.size(); j++){ //
+             for(int j = 1; j < mansionsCol.size(); j++){ //
                 if(getDistance(pos, mansionsCol.get(0).position) < MARGIN_15 || getDistance(pos, mansionsCol.get(j).position) < MARGIN_10) {
                     pos = generatePosition();
                     j = 1;
@@ -341,18 +305,15 @@ public class Generator {
             mansionsCol.add(man);
         }
     }
-
-    /**
+     /**
      * Generates mansions of size 1 with the same margins as size 2.
      */
     public void generateSize1(){
         Point2D pos;
         AMansion man = null;
-
-        for(int i = 0; i < numberOfSize1; i++){
+         for(int i = 0; i < numberOfSize1; i++){
             pos = generatePosition();
-
-            for(int j = 1; j < mansionsCol.size(); j++){ //
+             for(int j = 1; j < mansionsCol.size(); j++){ //
                 if(getDistance(pos, mansionsCol.get(0).position) < MARGIN_15 || getDistance(pos, mansionsCol.get(j).position) < MARGIN_10) {
                     pos = generatePosition();
                     j = 1;
@@ -362,13 +323,11 @@ public class Generator {
             mansionsCol.add(man);
         }
     }
-
-	//pak vymazat
+ 	//pak vymazat
 	private String pomocnejVypis(){
 		return String.format("1: %s\n2: %s\n3: %s\n4: %s\n5: %s\n6: %s", numberOfSize1, numberOfSize2, numberOfSize3, numberOfSize4, numberOfSize5, numberOfSize6);
 	}
-
-    /**
+     /**
      * Returns the List of mansions.
      * @return Collection of mansions.
      */
