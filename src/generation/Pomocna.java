@@ -1,21 +1,21 @@
-package Generation;
+package generation;
 
 public class Pomocna {
 
 
 
-    private int[][] distanceMatrix;
-    private int[][] timeMatrix;
+    private short[][] distanceMatrix;
+    private short[][] timeMatrix;
 
-    public Pomocna(int[][] dMatrix, int[][] tMatrix){
+    public Pomocna(short[][] dMatrix, short[][] tMatrix){
         this.distanceMatrix = dMatrix;
         this.timeMatrix = tMatrix;
     }
-    public int[][] getDistanceMatrix() {
+    public short[][] getDistanceMatrix() {
         return distanceMatrix;
     }
 
-    public int[][] getTimeMatrix() {
+    public short[][] getTimeMatrix() {
         return timeMatrix;
     }
     
