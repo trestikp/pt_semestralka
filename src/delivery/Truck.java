@@ -1,6 +1,7 @@
 package delivery;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -13,7 +14,7 @@ public class Truck {
 	public static final int COST_PER_KM=25;
 	
 	public static Queue<Truck> launchableTrucks= new LinkedList<Truck>();
-	public static ArrayList<Truck> trucksOnRoad= new ArrayList<Truck>() ;
+	public static ArrayList<Truck> trucksOnRoad= new ArrayList<>() ;
 	
 	public static int count_of_trucks=0;
 	public static int count_of_delivered_orders=0;
@@ -68,8 +69,8 @@ public class Truck {
 			int load=o.getAmount();
 			this.actualLoad-=load;
 			count_of_delivered_orders++;
-			System.out.println("Nakladak c."+numOfTruck+" vylozil "+load+
-					" palet v sidle c."+o.getSubscriber().ID+".");
+			System.out.println("Truck n: "+numOfTruck+" unloaded "+load+
+					" pallet in mansion n: "+o.getSubscriber().ID+".");
 		}
 		else {
 			throw new Exception("NO ORDERS LEFT!");
@@ -78,7 +79,7 @@ public class Truck {
 	
 	public void sendOnRoad(int timeOfStartInMin) {
 		if(orders.size()==0) {
-			System.out.println("Nelze vyslat na cestu bez objednavek!");
+			System.out.println("Can't send on road without orders!");
 			return;
 		}
 		
@@ -96,7 +97,7 @@ public class Truck {
 		Truck t= Truck.launchableTrucks.poll();
 		Truck.trucksOnRoad.add(t);
 		
-		System.out.println("Nakladak �."+numOfTruck+" zacina nakladat "+actualLoad+" palet.");
+		System.out.println("Truck n: "+numOfTruck+" is starting to load "+actualLoad+" pallet(s).");
 		
 		
 		
@@ -109,7 +110,7 @@ public class Truck {
 	
 	
 	private void returnToHQ() {
-		System.out.println("Nakladak c."+numOfTruck+" se vratil do HQ!");
+		System.out.println("Truck n: "+numOfTruck+" has returned to HQ!");
 		neededTimeInMin=0;
 		timeOfStartInMin=-1;
 		actualLoad=0;
@@ -146,11 +147,49 @@ public class Truck {
 				}
 				
 			}
-		
-		
-	
+	}
+
+	private String ordersToString(){
+		String res = "";
+		Iterator<Order> it = orders.iterator();
+		while (it.hasNext()){
+			res += it.next().toString()+"\n";
+		}
+
+		return res;
+	}
+
+	private String minToHour(int min){
+		String res = "";
+		if(min > 60){
+			int hours = min/60;
+			int minutes = min%60;
+			if(hours < 10){
+				res += "0" + hours + ":";
+			} else {
+				res += hours + ":";
+			}
+			if(minutes < 10){
+				res += "0" + minutes + "\n";
+			} else {
+				res += minutes + "\n";
+			}
+		} else {
+			res = min + " min.\n";
+		}
+		return res;
 	}
 	
-	
+	public String infoAboutTruck(){
+		String res = "Truck id: " + this.numOfTruck + "\n";
+		res += "Load : " + actualLoad + " pallets\n";
+		res += "Orders: " + ordersToString() + "\n";
+		res += "Time needed: " + minToHour(neededTimeInMin);
+		res += "Time of start: " + minToHour(timeOfStartInMin);
+		res += "Total distance: " + momentalKM + " km\n";
+		res += "Travel expenses: " + travelExpenses + " Kc\n";
+
+		return res;
+	}
 	
 }

@@ -1,21 +1,29 @@
 package graphics;
 
+import delivery.Truck;
+import generation.AMansion;
 import javafx.application.Platform;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 
-import javafx.scene.control.TextArea;
-import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.Node;
+import javafx.scene.control.*;
+import javafx.util.Callback;
+import javafx.util.StringConverter;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.util.List;
 
 public class GuiController {
     /** Simulation speed in [ms]. Default value = 20ms */
     private int simulation_speed;
 
     private PrintStream ps;
+
+    private ObservableList<Truck> trucks;
 
     @FXML
     private TextArea consoleLog;
@@ -44,11 +52,11 @@ public class GuiController {
     @FXML
     private TextField simSpeed;
 
-    //@FXML
-    //private URL location;
+    @FXML
+    private ComboBox<Truck> truckCombo;
 
-    //@FXML
-    //private ResourceBundle resources;
+    @FXML
+    private ComboBox<AMansion> manCombo;
 
     public GuiController(){
     }
@@ -104,33 +112,62 @@ public class GuiController {
     @FXML
     public void stopAction() {
         GUI.sim.endSimulation();
+        setTruckComboBox();
     }
 
     @FXML
     public void pauseAction() {
         GUI.sim.pauseSim();
+        setTruckComboBox();
     }
 
     @FXML
     public void generate(){
         if(manCount.getText().equals("")){
-            GUI.runGeneration(2000);
+            Thread gen = new Thread(() -> GUI.runGeneration(2000));
+            gen.start();
+            //GUI.runGeneration(2000);
         } else {
             if(Integer.parseInt(manCount.getText()) < 500 || Integer.parseInt(manCount.getText()) > 2000){
                 System.out.println("Please enter a number between 500 and 2000");
             } else {
-                GUI.runGeneration(Integer.parseInt(manCount.getText()));
+                Thread gen = new Thread(() -> GUI.runGeneration(Integer.parseInt(manCount.getText())));
+                gen.start();
+                //GUI.runGeneration(Integer.parseInt(manCount.getText()));
             }
         }
     }
 
-    public class TextAreaConsole {
+    private void setTruckComboBox(){
+        trucks = FXCollections.observableArrayList(Truck.trucksOnRoad);
+        truckCombo.setItems(trucks);
+        truckCombo.setConverter(new StringConverter<Truck>(){
+            @Override
+            public String toString(Truck t){
+                return "Truck id: " + t.numOfTruck;
+            }
+
+            @Override
+            public Truck fromString(String s){
+                return null;
+            }
+        });
+        truckCombo.setOnAction(event -> {
+            Truck t = truckCombo.getValue();
+            truckLog.setText(t.infoAboutTruck());
+        });
+    }
+
+    /**
+     * Class used to redirect console output stream to the GUI TextArea.
+     */
+    class TextAreaConsole {
         private static final int STRING_BUFFER = 4096;
         private static final int FLUSH_INT = 200;
         private static final int MAX_TEXT_LEN = 256 * 2048; //256 znaku na radce, 2048 radek - dal se deli 2, takze realne jen 1024 radek (lepsi, rychlejsi)
 
         private final TextArea textArea;
-        private  final StringBuffer write = new StringBuffer();
+        private final StringBuffer write = new StringBuffer();
 
 
         private final Thread writeThread = new Thread(new Runnable() {

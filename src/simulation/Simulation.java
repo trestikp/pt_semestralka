@@ -142,9 +142,9 @@ public class Simulation {
 		//kazdych 5 minut
 			
 			lastCheck=actualTimeinSec;
-			int hou=actualTimeinSec/3600;
-			int min=(actualTimeinSec/60)%60;
-			System.out.println("TIME= "+hou+":"+min);
+			//int hou=actualTimeinSec/3600;
+			//int min=(actualTimeinSec/60)%60;
+			System.out.print("TIME= "+secToHour(actualTimeinSec));
 			
 			if(actualTimeinSec>=START_OF_ORDERING&&actualTimeinSec<Mansion.DEFAULT_END_OF_OPENING_IN_SEC) {
 				
@@ -161,7 +161,7 @@ public class Simulation {
 						}
 						orderingTimesDone++;
 					}
-					System.out.println("Pocet objednavek "+getCountOfOrders());
+					System.out.println("Number of orders: "+getCountOfOrders());
 					splitOrders();
 					launchAllTrucks();
 				}
@@ -370,13 +370,33 @@ public class Simulation {
 		
 		Order.NUM_OF_ALL_ORDERS=0;
 		numDay++;
-		System.out.println("Den �."+numDay);
+		System.out.println("Day "+numDay);
 		//TODO konec simulace?
 		//if(numDay>3)stopSimulation();
 		
 	}
-	
-	
+
+	private String secToHour(int sec){
+		int min = sec/60;
+		String res = "";
+		if(min > 60){
+			int hours = min/60;
+			int minutes = min%60;
+			if(hours < 10){
+				res += "0" + hours + ":";
+			} else {
+				res += hours + ":";
+			}
+			if(minutes < 10){
+				res += "0" + minutes + "\n";
+			} else {
+				res += minutes + "\n";
+			}
+		} else {
+			res = min + " min.\n";
+		}
+		return res;
+	}
 	
 	
 	
