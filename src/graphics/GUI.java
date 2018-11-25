@@ -54,19 +54,49 @@ public class GUI extends Application {
         //Application.launch(args);
     }
 
-    public static void runGeneration(int numberToGenerate){
+/*
+    public static void generateMansions(int numberToGenerate){
         System.out.println("--------------Start of generating--------------");
         System.out.println("Starting generating mansions.");
         long start = System.nanoTime();
         g = new Generator(numberToGenerate);
         long end = System.nanoTime();
         System.out.println("\n Finished generating mansions in: " + (end/1000000 -start/1000000) + "ms\n");
+    }
+
+    public static void generatePaths(){
+        System.out.println("Starting generating roads.");
+        long start = System.nanoTime();
+        p = new PathGenerator(g.getMansions());
+        long end = System.nanoTime();
+        System.out.println("\n Finished generating roads in: " + (end/1000000 -start/1000000) + "ms\n");
+    }
+
+    public static void findPaths(){
+        System.out.println("Starting generating paths.");
+        long start = System.nanoTime();
+        PathFinder.pathFinding(p.getDistanceMatrix(),p.getTimeMatrix());
+        long end = System.nanoTime();
+        System.out.println("\nFinished generating paths in: "+ (end/1000000000 -start/1000000000) +"s\n");
+        System.out.println("--------------End of generating--------------");
+    }
+*/
+    public static void runGeneration(int numberToGenerate){
+
+        System.out.println("--------------Start of generating--------------");
+        System.out.println("Starting generating mansions.");
+        long start = System.nanoTime();
+        g = new Generator(numberToGenerate);
+        long end = System.nanoTime();
+        System.out.println("\n Finished generating mansions in: " + (end/1000000 -start/1000000) + "ms\n");
+        System.out.flush();
 
         System.out.println("Starting generating roads.");
         start = System.nanoTime();
         p = new PathGenerator(g.getMansions());
         end = System.nanoTime();
         System.out.println("\n Finished generating roads in: " + (end/1000000 -start/1000000) + "ms\n");
+        System.out.flush();
 
         System.out.println("Starting generating paths.");
         start = System.nanoTime();
@@ -74,6 +104,11 @@ public class GUI extends Application {
         end = System.nanoTime();
         System.out.println("\nFinished generating paths in: "+ (end/1000000000 -start/1000000000) +"s\n");
         System.out.println("--------------End of generating--------------");
+        System.out.flush();
+
+        //generateMansions(numberToGenerate);
+        //generatePaths();
+        //findPaths();
 
         sim= new Simulation(g.getMansions(),new Pomocna(p.getDistanceMatrix(),p.getTimeMatrix()),
                 PathFinder.getDistancePaths(),PathFinder.getTimePaths());

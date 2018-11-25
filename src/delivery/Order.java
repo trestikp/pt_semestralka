@@ -18,7 +18,7 @@ public class Order {
 		this.amount=am;
 		NUM_OF_ALL_ORDERS++;
 		this.orderNum=NUM_OF_ALL_ORDERS;
-		System.out.println("Objedn�vka �."+orderNum+" pro "+am+" palet byla vytvo�ena!");
+		System.out.println("Order n: "+orderNum+" for "+am+" pallet has been made by mansion n: " + subscriber.ID + "!");
 	}
 	
 	public void setProbableTime(int timeInMin) {
@@ -36,6 +36,9 @@ public class Order {
 	public Mansion getSubscriber() {
 		return subscriber;
 	}
-	
-	
+
+	@Override
+	public String toString(){
+		return "	Order: " + orderNum + ", by mansion: " + subscriber.ID + ", amount: " + amount + " pallets";
+	}
 }
