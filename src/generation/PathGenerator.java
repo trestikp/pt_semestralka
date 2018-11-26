@@ -48,7 +48,7 @@ public class PathGenerator {
         }
     }
 
-    public short[][] generatePaths(){
+    public void generatePaths(){
         int x;
         int type;
         double distance;
@@ -61,8 +61,7 @@ public class PathGenerator {
                     i--;
                 } else {
                     if(distanceMatrix[j][x] > 0){
-                        x = rand.nextInt(mansions.size());
-                        i--;
+                        continue;
                     } else {
                         distance = (mansions.get(j).getDistance(mansions.get(x)) / Generator.multiplier);
                         distanceMatrix[j][x] = (short) distance;  //mozne pomerne znatelne ztraty z pretypovani na double
@@ -85,8 +84,6 @@ public class PathGenerator {
                 }
             }
         }
-
-        return distanceMatrix;
     }
 
     public void getPathsFromFile(File f){

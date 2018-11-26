@@ -61,5 +61,36 @@ public class Mansion extends AMansion{
     	numOfDeliveredGoods+=actualOrder.peek().getAmount();
     	ordersDone.add(actualOrder.poll());
     }
+
+    public String mansionInfo(){
+        String res = "";
+        res += "ID: " + ID + "\n";
+        res += "Name: " + name + "\n";
+        res += "Location: [" + position.getX() + "," + position.getY() +"]\n";
+        res += "Opening time: " + minToHour(openingTimeInMin) + "\n";
+        res += "Distance to HQ: " + PathFinder.getDistancePaths()[0][ID].getValue() + "\n";
+        return res;
+    }
+
+    private String minToHour(int min){
+        String res = "";
+        if(min > 60){
+            int hours = min/60;
+            int minutes = min%60;
+            if(hours < 10){
+                res += "0" + hours + ":";
+            } else {
+                res += hours + ":";
+            }
+            if(minutes < 10){
+                res += "0" + minutes;
+            } else {
+                res += minutes;
+            }
+        } else {
+            res = min + " min.";
+        }
+        return res;
+    }
     
 }

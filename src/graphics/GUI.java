@@ -2,22 +2,29 @@ package graphics;
 
 import generation.*;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.AnchorPane;
+import javafx.scene.transform.Scale;
 import javafx.stage.Stage;
 import simulation.Simulation;
 
 import java.io.FileInputStream;
-import java.io.PrintStream;
+import java.util.List;
 
 public class GUI extends Application {
 
-    public static Simulation sim;
+    public static Simulation sim = null;
 
-    public static Generator g;
+    public static Generator g = null;
 
-    public static PathGenerator p;
+    public static PathGenerator p = null;
+
+    public static List<AMansion> mansions = null;
+
+    public static short[][] distanceMatrix = null, timeMatrix = null;
 
     public static void main(String [] args){
 
@@ -89,6 +96,7 @@ public class GUI extends Application {
         g = new Generator(numberToGenerate);
         long end = System.nanoTime();
         System.out.println("\n Finished generating mansions in: " + (end/1000000 -start/1000000) + "ms\n");
+        mansions = g.getMansions();
         System.out.flush();
 
         System.out.println("Starting generating roads.");
@@ -96,6 +104,8 @@ public class GUI extends Application {
         p = new PathGenerator(g.getMansions());
         end = System.nanoTime();
         System.out.println("\n Finished generating roads in: " + (end/1000000 -start/1000000) + "ms\n");
+        distanceMatrix = p.getDistanceMatrix();
+        timeMatrix = p.getTimeMatrix();
         System.out.flush();
 
         System.out.println("Starting generating paths.");
@@ -110,23 +120,68 @@ public class GUI extends Application {
         //generatePaths();
         //findPaths();
 
-        sim= new Simulation(g.getMansions(),new Pomocna(p.getDistanceMatrix(),p.getTimeMatrix()),
-                PathFinder.getDistancePaths(),PathFinder.getTimePaths());
-
+        if(mansions != null && distanceMatrix != null && timeMatrix != null){
+            sim= new Simulation(g.getMansions(),new Pomocna(p.getDistanceMatrix(),p.getTimeMatrix()),
+                    PathFinder.getDistancePaths(),PathFinder.getTimePaths());
+        } else {
+            System.out.println("Missing some data necessary to start simulation!");
+        }
     }
 
 
     @Override
     public void start(Stage primaryStage) throws Exception {
+        primaryStage.setMinWidth(1296);
+        primaryStage.setMinHeight(759);
         FXMLLoader loader = new FXMLLoader();
         String fxmlPath = "src/graphics/gui.fxml";
         FileInputStream fio = new FileInputStream(fxmlPath);
 
-        Parent root = loader.load(fio);
+        AnchorPane root = loader.load(fio);
 
         Scene scene = new Scene(root);
+
+        final double initWidth = root.getPrefWidth();
+        final double initHeight = root.getPrefHeight();
+
+        scene.widthProperty().addListener(new scaleListener(scene, initWidth, initHeight));
+
         primaryStage.setScene(scene);
         primaryStage.setTitle("Mr Pallet, son and grandsons");
         primaryStage.show();
+    }
+
+    class scaleListener implements ChangeListener<Number>{
+        private final Scene scene;
+        private final double initWidth;
+        private final double initHeight;
+        //private final AnchorPane root;
+
+        public scaleListener(final Scene scene, final double initWidth, final double initHeight){
+            this.scene = scene;
+            this.initWidth = initWidth;
+            this.initHeight = initHeight;
+            //this.root = root;
+        }
+
+
+        @Override
+        public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+            final double newWidth = scene.getWidth();
+            final double newHeight = scene.getHeight();
+
+            //System.out.println(scene.getWidth()+ " -- " + initWidth);
+            //System.out.println(scene.getHeight() + " -- " + initHeight);
+
+            double ratio = Math.min(newHeight/initHeight, newWidth/initWidth);
+            //System.out.println(ratio);
+
+            if(ratio >= 1){
+                Scale scale = new Scale(ratio, ratio);
+                scale.setPivotX(0);
+                scale.setPivotY(0);
+                scene.getRoot().getTransforms().setAll(scale);
+            }
+        }
     }
 }

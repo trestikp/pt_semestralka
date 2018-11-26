@@ -1,41 +1,49 @@
 package graphics;
 
 import delivery.Truck;
-import generation.AMansion;
+import generation.*;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 
-import javafx.scene.Node;
 import javafx.scene.control.*;
-import javafx.util.Callback;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
+import simulation.Simulation;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.List;
 
 public class GuiController {
     /** Simulation speed in [ms]. Default value = 20ms */
     private int simulation_speed;
 
-    private PrintStream ps;
+    //private PrintStream ps;
 
     private ObservableList<Truck> trucks;
+
+    private ObservableList<AMansion> mansions;
+
+    private boolean mansionsImported = false, matrixesImported = false, dataGenerated = false;
 
     @FXML
     private TextArea consoleLog;
 
     @FXML
-    private TextArea truckLog;
+    private TextArea infoLog;
+
+    @FXML
+    private TextField manCount;
+
+    @FXML
+    private TextField simSpeed;
 
     @FXML
     private Button startBtn;
-
-    @FXML
-    private Button resumeBtn;
 
     @FXML
     private Button pauseBtn;
@@ -44,13 +52,7 @@ public class GuiController {
     private Button stopBtn;
 
     @FXML
-    private Button genBtn;
-
-    @FXML
-    private TextField manCount;
-
-    @FXML
-    private TextField simSpeed;
+    private Button resumeBtn;
 
     @FXML
     private ComboBox<Truck> truckCombo;
@@ -67,6 +69,10 @@ public class GuiController {
         //System.setOut(ps);
         //System.setErr(ps);
 
+        stopBtn.setDisable(true);
+        pauseBtn.setDisable(true);
+        resumeBtn.setDisable(true);
+
         TextAreaConsole tac = new TextAreaConsole(consoleLog);
         tac.start();
     }
@@ -74,17 +80,51 @@ public class GuiController {
     @FXML
     public void startAction(){
         boolean run = false;
+        boolean canRun = false;
+        setManComboBox();
+
+        if(mansionsImported){
+            if(matrixesImported){
+                PathFinder.pathFinding(GUI.distanceMatrix, GUI.timeMatrix);
+                System.out.println("\n--------------End of generating Paths--------------\n");
+                canRun = true;
+            } else {
+                GUI.p = new PathGenerator(GUI.mansions);
+                System.out.println("Starting generating roads.");
+                long start = System.nanoTime();
+                GUI.p.generatePaths();
+                long end = System.nanoTime();
+                System.out.println("\n Finished generating roads in: " + (end/1000000 -start/1000000) + "ms\n");
+                GUI.distanceMatrix = GUI.p.getDistanceMatrix();
+                GUI.timeMatrix = GUI.p.getTimeMatrix();
+                PathFinder.pathFinding(GUI.distanceMatrix, GUI.timeMatrix);
+                System.out.println("\n--------------End of generating Paths--------------\n");
+                canRun = true;
+            }
+            GUI.sim = new Simulation(GUI.mansions,new Pomocna(GUI.distanceMatrix,GUI.timeMatrix),
+                    PathFinder.getDistancePaths(),PathFinder.getTimePaths());
+        } else {
+            if(!matrixesImported){
+                canRun = true;
+            }
+        }
+
         if(!(simSpeed.getText().equals(""))){
             if(Integer.parseInt(simSpeed.getText()) < 15){
                 System.out.println("Speed of the simulation must be 15 or more ms!");
             } else {
                 simulation_speed = Integer.parseInt(simSpeed.getText());
-                run = true;
+                if(canRun){
+                    run = true;
+                }
             }
             //System.out.println("CAS SIM: " + simulation_speed);
         } else {
             simulation_speed = 20;
-            run = true;
+            if(canRun){
+                run = true;
+            }
+
             //System.out.println("CAS SIM: " + simulation_speed);
         }
 
@@ -102,27 +142,42 @@ public class GuiController {
             });
             sim.start();
         }
+
+        stopBtn.setDisable(false);
+        pauseBtn.setDisable(false);
+        startBtn.setDisable(true);
     }
 
     @FXML
     public void resumeAction() {
         GUI.sim.resumeSim();
+        pauseBtn.setDisable(false);
+        stopBtn.setDisable(false);
+        resumeBtn.setDisable(true);
     }
 
     @FXML
     public void stopAction() {
         GUI.sim.endSimulation();
         setTruckComboBox();
+        resumeBtn.setDisable(true);
+        pauseBtn.setDisable(true);
+        stopBtn.setDisable(true);
     }
 
     @FXML
     public void pauseAction() {
         GUI.sim.pauseSim();
         setTruckComboBox();
+        resumeBtn.setDisable(false);
+        startBtn.setDisable(true);
+        stopBtn.setDisable(false);
+        pauseBtn.setDisable(true);
     }
 
     @FXML
     public void generate(){
+        startBtn.setDisable(false);
         if(manCount.getText().equals("")){
             Thread gen = new Thread(() -> GUI.runGeneration(2000));
             gen.start();
@@ -136,6 +191,7 @@ public class GuiController {
                 //GUI.runGeneration(Integer.parseInt(manCount.getText()));
             }
         }
+        dataGenerated = true;
     }
 
     private void setTruckComboBox(){
@@ -154,8 +210,103 @@ public class GuiController {
         });
         truckCombo.setOnAction(event -> {
             Truck t = truckCombo.getValue();
-            truckLog.setText(t.infoAboutTruck());
+            infoLog.setText(t.infoAboutTruck());
         });
+    }
+
+    private void setManComboBox(){
+        mansions = FXCollections.observableArrayList(GUI.mansions);
+        manCombo.setItems(mansions);
+        manCombo.setConverter(new StringConverter<AMansion>() {
+            @Override
+            public String toString(AMansion object) {
+                if(object instanceof HQ){
+                    return "HQ";
+                } else {
+                    return ((Mansion)object).name;
+                }
+            }
+
+            @Override
+            public AMansion fromString(String string) {
+                return null;
+            }
+        });
+        manCombo.setOnAction(event -> {
+            AMansion man = manCombo.getValue();
+            if(man instanceof HQ){
+                infoLog.setText(((HQ)man).HQInfo());
+            } else{
+                infoLog.setText(((Mansion)man).mansionInfo());
+            }
+        });
+    }
+
+    public void importMansions() {
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Choose mansion source");
+        File f = fc.showOpenDialog(consoleLog.getScene().getWindow());
+
+        if(f == null){
+            System.out.println("File not chosen! Terminating import!");
+        } else {
+            long start = System.nanoTime();
+            GUI.mansions = FileIO.importFromFile(f);
+            long end = System.nanoTime();
+            System.out.println("Imported mansions from file in " + (end/1000000 -start/1000000) +"ms.");
+            mansionsImported = true;
+        }
+    }
+
+    public void importMatrixes() {
+        FileChooser fc = new FileChooser();
+        fc.setTitle("Choose matrixes source");
+        File f = fc.showOpenDialog(consoleLog.getScene().getWindow());
+
+        if(f == null){
+            System.out.println("File not chosen! Terminating import!");
+        } else {
+            long start = System.nanoTime();
+            Pomocna p = FileIO.importMatrix(f);
+            long end = System.nanoTime();
+            GUI.distanceMatrix = p.getDistanceMatrix();
+            GUI.timeMatrix = p.getTimeMatrix();
+            System.out.println("Imported matrixes from file in " + (end/1000000 -start/1000000) +"ms.");
+            matrixesImported = true;
+        }
+    }
+
+    public void exportToFiles() {
+        DirectoryChooser dc = new DirectoryChooser();
+        dc.setInitialDirectory(new File(System.getProperty("user.dir")));
+        dc.setTitle("Choose destination");
+        File f = dc.showDialog(consoleLog.getScene().getWindow());
+
+        if(f == null){
+            System.out.println("Directory not chosen! Terminating export!");
+        } else {
+            System.out.println("Chosen dir: " + f.getPath());
+            if(GUI.distanceMatrix == null || GUI.timeMatrix == null){
+                System.out.println("Error. Matrixes are corrupted or don't exist! Please generate or import new ones.");
+            } else {
+                if(GUI.mansions == null){
+                    System.out.println("Error. Mansions don't exist or can't be read! Please generate or import new ones.");
+                } else {
+                    FileIO.exportToFile(GUI.mansions, f);
+                    FileIO.exportMatrix(GUI.distanceMatrix, GUI.timeMatrix, f);
+                    System.out.println("Finished exporting files. Names: matrixes.txt and mansions.txt");
+                }
+            }
+        }
+    }
+
+    public void exportStatistics() {
+    }
+
+    public void instructions() {
+    }
+
+    public void about() {
     }
 
     /**

@@ -12,10 +12,29 @@ import java.util.Scanner;
  * Class used for exporting/importing information of mansions - to be removed?
  */
 public class FileIO {
-
+/*
     public static void exportToFile(List<AMansion> col){
         try {
             PrintWriter pw = new PrintWriter(new File("vstup.txt"));
+            pw.printf("%s;%d;%d\n", "HQ", (int) col.get(0).position.getX(), (int) col.get(0).position.getY());
+            for(int i = 1; i < col.size(); i++){
+                Mansion a = (Mansion) col.get(i);
+                int size = a.size;
+                double x = a.position.getX();
+                double y = a.position.getY();
+                String name = a.name;
+                int ID = a.ID;
+                pw.printf("%d;%d;%d;%s;%d\n",size, (int) x, (int) y, name, ID);
+            }
+            pw.close();
+        } catch (IOException e){
+            System.out.println("IO Exception" + e.getMessage());
+        }
+    }*/
+
+    public static void exportToFile(List<AMansion> col, File dir){
+        try {
+            PrintWriter pw = new PrintWriter(new File(dir.getPath() + "/mansions.txt"));
             pw.printf("%s;%d;%d\n", "HQ", (int) col.get(0).position.getX(), (int) col.get(0).position.getY());
             for(int i = 1; i < col.size(); i++){
                 Mansion a = (Mansion) col.get(i);
@@ -56,10 +75,25 @@ public class FileIO {
         }
         return col;
     }
-
+/*
     public static void exportMatrix(short distanceMatrix[][], short timeMatrix[][]){
         try {
             PrintWriter pw = new PrintWriter(new File("distanceMatrix.txt"));
+            for(int i = 0; i < distanceMatrix.length; i++){
+                for(int j = 0; j < distanceMatrix.length; j++){
+                    pw.print(distanceMatrix[i][j] + "!" + timeMatrix[i][j] + ";");
+                }
+                pw.println();
+            }
+            pw.close();
+        } catch (IOException e){
+            System.out.println(e.getMessage());
+        }
+    }
+*/
+    public static void exportMatrix(short distanceMatrix[][], short timeMatrix[][], File dir){
+        try {
+            PrintWriter pw = new PrintWriter(new File(dir.getPath() + "/matrixes.txt"));
             for(int i = 0; i < distanceMatrix.length; i++){
                 for(int j = 0; j < distanceMatrix.length; j++){
                     pw.print(distanceMatrix[i][j] + "!" + timeMatrix[i][j] + ";");

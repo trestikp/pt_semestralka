@@ -16,5 +16,12 @@ public class HQ extends AMansion{
 	public HQ(Point2D position) {
 		super(position);
 	}
-	
+
+	public String HQInfo(){
+		String res = "";
+		res += "ID: 0\n";
+		res += "Name: HQ\n";
+		res += "Location: [" + position.getX() + "," + position.getY() +"]";
+		return res;
+	}
 }
