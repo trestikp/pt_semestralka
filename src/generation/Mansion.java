@@ -2,6 +2,7 @@ package generation;
 
 import java.awt.geom.Point2D;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Queue;
 
 import delivery.Order;
@@ -12,9 +13,9 @@ import delivery.Order;
 public class Mansion extends AMansion{
 
 	 public static final int OPENED_TIME_IN_MIN=120;
-	 public static final int DEFAULT_START_OF_OPENING_IN_SEC = 480*60;
-	 public static final int DEFAULT_END_OF_OPENING_IN_SEC = 1200*60;
-
+	 public static final int DEFAULT_START_OF_OPENING_IN_MIN = 480;
+	 public static final int DEFAULT_END_OF_OPENING_IN_MIN = 1200;
+	 public static final int ORDER_SIZE_LIMIT = 6;
 	
     /** Size of the mansion */
     public int size;
@@ -28,7 +29,8 @@ public class Mansion extends AMansion{
     
     public int openingTimeInMin;
     
-    public int numOfDeliveredGoods=0;
+    private int numOfGoodsToBeDelivered=0;
+    
     
     private Queue<Order> actualOrder = new LinkedList<Order>();
     public LinkedList<Order> ordersDone= new LinkedList<Order>();
@@ -58,7 +60,6 @@ public class Mansion extends AMansion{
     	//TODO
     	System.out.println("Objednavka c."+actualOrder.peek().orderNum+" byla dorucena. "
     			+ "Probiha vyklad "+actualOrder.peek().getAmount()+" palet.");
-    	numOfDeliveredGoods+=actualOrder.peek().getAmount();
     	ordersDone.add(actualOrder.poll());
     }
 
@@ -72,6 +73,13 @@ public class Mansion extends AMansion{
         return res;
     }
 
+    public boolean canOrder() {
+    	if(numOfGoodsToBeDelivered >= ORDER_SIZE_LIMIT) {
+    		return false;
+    	}
+    	return true;
+    }
+    
     private String minToHour(int min){
         String res = "";
         if(min > 60){
@@ -92,5 +100,16 @@ public class Mansion extends AMansion{
         }
         return res;
     }
+    
+    private void resetGoodsLimit() {
+    	this.numOfGoodsToBeDelivered=0;
+    }
+    
+    public static void nextDay(List<AMansion> nodes) {
+    	for(int i=1; i<nodes.size(); i++) {
+    		((Mansion)nodes.get(i)).resetGoodsLimit();
+    	}
+    }
+    
     
 }
