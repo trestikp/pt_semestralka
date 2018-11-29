@@ -17,25 +17,21 @@ public class Truck {
 	public static ArrayList<Truck> trucksOnRoad= new ArrayList<>() ;
 	
 	public static int count_of_trucks=0;
-	public static int count_of_delivered_orders=0;
+	
 	
 	public int numOfTruck;
 	
 	//TODO dodelat pro statistiky
-	private int totalKm=0;
 	private int totalTime=0;
-	
-	//TODO pro statistiky
-	private int travelExpenses=0;
-	
+	private int totalKm=0;
+	private int totalLoad=0;
 	
 	private int momentalKM=0;
 	private int neededTimeInMin=0;
-	
 	private int timeOfStartInMin=0;
-
-	private LinkedList<Order> orders= new LinkedList<Order>();
 	private int actualLoad;
+	
+	private LinkedList<Order> orders= new LinkedList<Order>();
 	
 	//private boolean isInHQ=true;
 	
@@ -49,8 +45,9 @@ public class Truck {
 	
 	
 	
-	public void addOrder(Order o) {
-		if(o==null)return;
+	public void addOrder(Order o) throws Exception {
+		if(o==null)throw new Exception("Null pointer on adding Orders");
+		if(o.getAmount()<1)throw new Exception("Cannot add order with zero amount");
 		if(orders.isEmpty()) {
 			momentalKM=calcKM(0, o.getSubscriber().ID);
 		}
@@ -68,7 +65,6 @@ public class Truck {
 			Order o= orders.poll();
 			int load=o.getAmount();
 			this.actualLoad-=load;
-			count_of_delivered_orders++;
 			System.out.println("Truck n: "+numOfTruck+" unloaded "+load+
 					" pallet in mansion n: "+o.getSubscriber().ID+".");
 		}
@@ -78,8 +74,8 @@ public class Truck {
 	}
 	
 	public void sendOnRoad(int timeOfStartInMin) {
-		if(orders.size()==0) {
-			System.out.println("Can't send on road without orders!");
+		if(orders.size()==0 || timeOfStartInMin <= 0) {
+			System.out.println("Can't send on road without orders or with strange time!");
 			return;
 		}
 		
@@ -87,13 +83,13 @@ public class Truck {
 		this.timeOfStartInMin=timeOfStartInMin;
 		neededTimeInMin= actualLoad*UNLOAD_TIME_IN_MIN*2;
 		
-		
 		neededTimeInMin+=((double)momentalKM/100);
-		travelExpenses+=momentalKM*COST_PER_KM;
 		
+		//STATISTIKY
 		totalKm+=momentalKM;
 		totalTime+=neededTimeInMin;
-
+		totalLoad+=actualLoad;
+		
 		Truck t= Truck.launchableTrucks.poll();
 		Truck.trucksOnRoad.add(t);
 		
@@ -114,6 +110,7 @@ public class Truck {
 		neededTimeInMin=0;
 		timeOfStartInMin=-1;
 		actualLoad=0;
+		
 		trucksOnRoad.remove(this);
 		launchableTrucks.add(this);
 	}
@@ -148,6 +145,97 @@ public class Truck {
 				
 			}
 	}
+	
+	/////STATISTICS
+	
+	public int getTotalKm() {
+		return totalKm;
+	}
+	public int getTotalTimeOnRoad() {
+		return totalTime;
+	}
+	public int getTotalLoad() {
+		return totalLoad;
+	}
+	public int getTotalExpense() {
+		return this.getTotalExpense()*COST_PER_KM;
+	}
+	
+	
+	public static int gettimeOfAllTrucksOnRoad() {
+	int result=0;
+		
+		for(Truck t: launchableTrucks) {
+			result+= t.getTotalTimeOnRoad();
+		}
+		for(Truck t: trucksOnRoad) {
+			result+= t.getTotalTimeOnRoad();
+		}
+		
+		return result;
+	}
+	
+	public static int getmileageOfAllTrucks() {
+		int result=0;
+		
+		for(Truck t: launchableTrucks) {
+			result+= t.getTotalKm();
+		}
+		for(Truck t: trucksOnRoad) {
+			result+= t.getTotalKm();
+		}
+		
+		return result;
+	}
+	public static int getTotalLoadOfAllTrucks() {
+		int result=0;
+		
+		for(Truck t: launchableTrucks) {
+			result+= t.getTotalLoad();
+		}
+		for(Truck t: trucksOnRoad) {
+			result+= t.getTotalLoad();
+		}
+		
+		return result;
+	}
+	
+	
+	//// NEXT DAY
+	
+	
+	public static void nextDay() {
+		if(!launchableTrucks.isEmpty()) {
+			System.out.println("Trucks are not in the HQ!!!");
+		
+			for(Truck t: trucksOnRoad) {
+				t.returnToHQ();
+			}
+		}
+		for(Truck t: launchableTrucks) {
+			t.resetStats();
+		}
+	}
+	
+	
+	private void resetStats() {
+
+		totalTime=0;
+		totalKm=0;
+		totalLoad=0;
+		
+		
+		momentalKM = 0;
+		neededTimeInMin = 0;
+		timeOfStartInMin = 0;
+		actualLoad = 0;
+		
+		if(!orders.isEmpty()) {
+			orders.removeFirst();
+		}
+	}
+	
+	/////////////////////STRING
 
 	private String ordersToString(){
 		String res = "";
@@ -187,7 +275,7 @@ public class Truck {
 		res += "Time needed: " + minToHour(neededTimeInMin);
 		res += "Time of start: " + minToHour(timeOfStartInMin);
 		res += "Total distance: " + momentalKM + " km\n";
-		res += "Travel expenses: " + travelExpenses + " Kc\n";
+		res += "Travel expenses: " + getTotalExpense() + " Kc\n";
 
 		return res;
 	}
