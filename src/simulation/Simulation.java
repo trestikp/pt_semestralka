@@ -10,9 +10,9 @@ import delivery.Truck;
 
 public class Simulation {
 
-	private static final int SECONDS_IN_DAY= 86400;
-	private static final int START_OF_ORDERING=21600;
-	private static final int END_OF_ORDERING=64800;
+	private static final int MINUTES_IN_DAY = 1440;
+	private static final int START_OF_ORDERING_IN_MIN = 360;
+	private static final int END_OF_ORDERING_IN_MIN = 1080;
 	
 	private int numDay=1;
 	
@@ -23,15 +23,15 @@ public class Simulation {
 	
 			
 	public List<AMansion> nodes;
-	public int actualTimeinSec=19800;
+	private int actualTimeinMin=330;
 	/**
 	 * Pocet kolikrat uz bylo za den provedeno objednavani
 	 */
-	public int orderingTimesDone;
+	private int orderingTimesDone;
 	/**
 	 * Kdy naposled probihalo generovani objednavani
 	 */
-	public int lastCheck;
+	private int lastCheckInMin;
 	
 	/**
 	 * distance/time path preference false=time true=distance
@@ -118,17 +118,17 @@ public class Simulation {
 	
 	
 	public void simulationStep() {
-		if(actualTimeinSec>=SECONDS_IN_DAY)nextDay();
+		if(actualTimeinMin>=MINUTES_IN_DAY)nextDay();
 		
 
-		if(actualTimeinSec-lastCheck>=300) {
+		if(actualTimeinMin-lastCheckInMin>=5) {
 			orderTime();
 			//What is going on the road drivers?
 			if(!Truck.trucksOnRoad.isEmpty()) {
-				Truck.checkStateOnRoad(actualTimeinSec/60);
+				Truck.checkStateOnRoad(actualTimeinMin);
 			}
 		}
-		actualTimeinSec+=60;
+		actualTimeinMin++;
 		
 		
 	
@@ -141,22 +141,22 @@ public class Simulation {
 	
 		//kazdych 5 minut
 			
-			lastCheck=actualTimeinSec;
-			//int hou=actualTimeinSec/3600;
-			//int min=(actualTimeinSec/60)%60;
-			System.out.print("TIME= "+secToHour(actualTimeinSec));
+			lastCheckInMin=actualTimeinMin;
+			System.out.print("TIME= "+minToHour(actualTimeinMin));
 			
-			if(actualTimeinSec>=START_OF_ORDERING&&actualTimeinSec<Mansion.DEFAULT_END_OF_OPENING_IN_SEC) {
+			if(actualTimeinMin>=START_OF_ORDERING_IN_MIN&&actualTimeinMin<Mansion.DEFAULT_END_OF_OPENING_IN_MIN) {
 				
-					if(actualTimeinSec<END_OF_ORDERING) {
+					if(actualTimeinMin<END_OF_ORDERING_IN_MIN) {
 						double chance= (((1/LAMBDA)*Math.exp(-orderingTimesDone/LAMBDA)))*1000;
 						for(int i = 1; i < matrix.mansionQuantity(); i++) {
-							int chancePoint = rand.nextInt(1000);
-							if(chancePoint<=chance) {
-								Mansion orderingMansion = (Mansion) nodes.get(i);
-								int amouth= getRandomAmouth(orderingMansion.size);
-								ordersToDo[amouth-1].add(new Order(orderingMansion,amouth));
-								
+							if(((Mansion)nodes.get(i)).canOrder()){
+								int chancePoint = rand.nextInt(1000);
+								if(chancePoint<=chance) {
+									Mansion orderingMansion = (Mansion) nodes.get(i);
+									int amouth= getRandomAmouth(orderingMansion.size);
+									ordersToDo[amouth-1].add(new Order(orderingMansion,amouth));
+									
+							}
 							}
 						}
 						orderingTimesDone++;
@@ -203,7 +203,7 @@ public class Simulation {
 		for(int i = 0; i<Truck.launchableTrucks.size(); i++) {
 			
 			if(Truck.launchableTrucks.peek().hasOrder()) {
-				Truck.launchableTrucks.peek().sendOnRoad(actualTimeinSec);
+				Truck.launchableTrucks.peek().sendOnRoad(actualTimeinMin);
 			}
 			else {
 				break;
@@ -212,7 +212,7 @@ public class Simulation {
 	}
 
 	private void splitOrders() throws IndexOutOfBoundsException  {
-		int actualTimeinMin=actualTimeinSec/60;
+		
 		for(int index=5;index>=0;index--) {
 			
 			int loadingTime = (index+1)*Truck.UNLOAD_TIME_IN_MIN;
@@ -333,7 +333,12 @@ public class Simulation {
 		//System.out.println("assigning orders");
 		if(Truck.launchableTrucks.isEmpty()) {
 			Truck t=new Truck();
-			t.addOrder(o);
+			try {
+				t.addOrder(o);
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			ordersToDo[o.getAmount()-1].remove(o);
 		}
 		
@@ -342,10 +347,15 @@ public class Simulation {
 			while(!Truck.launchableTrucks.isEmpty()) {
 				t=Truck.launchableTrucks.peek();
 				if(t.canLoad(o.getAmount())) {
-					t.addOrder(o);
+					try {
+						t.addOrder(o);
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 					ordersToDo[o.getAmount()-1].remove(o);
 				}else {
-					t.sendOnRoad(actualTimeinSec/60);
+					t.sendOnRoad(actualTimeinMin);
 				}
 				
 			}
@@ -362,11 +372,10 @@ public class Simulation {
 	
 	
 	public void nextDay() {
-		for(int i=1;i<nodes.size();i++) {
-			((Mansion)nodes.get(i)).numOfDeliveredGoods=0;
-		}
-		actualTimeinSec=0;
-		lastCheck=0;
+		Mansion.nextDay(nodes);
+		Truck.nextDay();
+		actualTimeinMin=0;
+		lastCheckInMin=0;
 		
 		Order.NUM_OF_ALL_ORDERS=0;
 		numDay++;
@@ -376,8 +385,7 @@ public class Simulation {
 		
 	}
 
-	private String secToHour(int sec){
-		int min = sec/60;
+	private String minToHour(int min){
 		String res = "";
 		if(min > 60){
 			int hours = min/60;
