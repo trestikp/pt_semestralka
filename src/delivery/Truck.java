@@ -2,6 +2,7 @@ package delivery;
 
 import java.util.*;
 
+import graphics.GUI;
 import simulation.Simulation;
 
 /**
@@ -51,6 +52,7 @@ public class Truck {
 	/** Load of the truck */
 	private int actualLoad;
 
+	
 	/** Orders the truck is delivering */
 	private LinkedList<Order> orders= new LinkedList<Order>();
 	
@@ -113,16 +115,17 @@ public class Truck {
 	 * @param timeOfStartInMin time when the truck sets out
 	 */
 	public void sendOnRoad(int timeOfStartInMin) {
-		if(orders.size()==0 || timeOfStartInMin <= 0) {
+		if(orders.size()==0 || timeOfStartInMin <= 0 ) {
 			System.out.println("Can't send on road without orders or with strange time!");
 			return;
 		}
+		
 		
 		//Vypocitat potrebny cas
 		this.timeOfStartInMin=timeOfStartInMin;
 		neededTimeInMin= actualLoad*UNLOAD_TIME_IN_MIN*2;
 		
-		neededTimeInMin+=((double)momentalKM/100);
+		neededTimeInMin+=(int)((double)momentalKM/100.0);
 		
 		//STATISTIKY
 		totalKm+=momentalKM;
@@ -146,7 +149,7 @@ public class Truck {
 	 * @return distance of the path
 	 */
 	private int calcKM(int pointA, int pointB) {
-		return (int)(((double)Simulation.distancePath[pointA][pointB].getValue()));
+		return (int)(((double)GUI.sim.distancePath[pointA][pointB].getValue()));
 	}
 
 	/**
@@ -157,7 +160,7 @@ public class Truck {
 		neededTimeInMin=0;
 		timeOfStartInMin=-1;
 		actualLoad=0;
-		
+		orders = new LinkedList<Order>();
 		trucksOnRoad.remove(this);
 		launchableTrucks.add(this);
 	}
@@ -181,24 +184,26 @@ public class Truck {
 
 
 	/**
-	 * Method finds out state of truck on road
+	 * Method finds out state of trucks on road
 	 * @param actualTimeInMin time of simulation
 	 */
 	public static void checkStateOnRoad(int actualTimeInMin) {
 
 		
 		//TODO
-			for(int i=0; i < trucksOnRoad.size(); i++) {
+			for(int i=trucksOnRoad.size()-1; i >= 0; i--) {
+			
 				Truck t= trucksOnRoad.get(i);
 				if(!t.orders.isEmpty() &&
 						actualTimeInMin > t.orders.peek().getProbableTime()){
 					try {
+						System.out.println(t.actualLoad);
 						t.completeOrder();
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 				}
-				else if(t.timeOfStartInMin+t.neededTimeInMin<=actualTimeInMin) {
+				else if(t.timeOfStartInMin+t.neededTimeInMin<=actualTimeInMin || actualTimeInMin <   Simulation.START_OF_ORDERING_IN_MIN  ) {
 					t.returnToHQ();
 				}
 				
@@ -325,9 +330,9 @@ public class Truck {
 		if(!launchableTrucks.isEmpty()) {
 			System.out.println("Trucks are not in the HQ!!!");
 		
-			for(Truck t: trucksOnRoad) {
+			/*for(Truck t: trucksOnRoad) {
 				t.returnToHQ();
-			}
+			}*/
 		}
 		for(Truck t: launchableTrucks) {
 			t.totalRunKm += t.getTotalKm();

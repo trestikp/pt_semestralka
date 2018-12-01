@@ -1,13 +1,18 @@
 package delivery;
 
+import java.util.LinkedList;
+
 import objects.Mansion;
 
 /**
  * Class of order
- * @author Pavel Třeštík and Tomáš Ott
+ * @author Pavel Trestik a Tomas Ott
  */
 public class Order {
 
+	public static LinkedList<Order> manualOrders= new LinkedList<Order>();
+	
+	
 	/** Number of all orders */
 	public static int numberOfAllOrders =0;
 
@@ -20,16 +25,24 @@ public class Order {
 	/** Expected time of delivery in min */
 	private int probableDeliveryInMin=0;
 
+	//TODO
+	private boolean manual = false;
+	
 	/**
 	 * Constructor of the order
 	 * @param sub mansion creating the order
 	 * @param am amount of pallets to be ordered
 	 */
-	public Order(Mansion sub, int am) {
+	public Order(Mansion sub, int am, boolean manual) {
 		this.subscriber=sub;
 		this.amount=am;
 		numberOfAllOrders++;
 		this.orderNum= numberOfAllOrders;
+		this.manual=manual;
+		if(manual) {
+			manualOrders.add(this);
+			System.out.print("MANUAL ");
+		}
 		System.out.println("Order n: "+orderNum+" for "+am+" pallet has been made by mansion n: " + subscriber.ID + "!");
 	}
 
