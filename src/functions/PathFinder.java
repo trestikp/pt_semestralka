@@ -1,24 +1,15 @@
 package functions;
- import objects.Path;
-
  import java.util.ArrayList;
 
-/**
- * Class for finding paths in the graph
- * @author Pavel Třeštík and Tomáš Ott
- */
+import objects.Path;
+
 public class PathFinder {
-
-	/** Matrix storing distance paths */
+ 	
 	private static Path[][] distancePaths;
-	/** Matrix storing time paths */
 	private static Path[][] timePaths;
-
-	/**
-	 * Method finding paths
- 	 * @param pat edge distance matrix
-	 * @param timepat edge time matrix
-	 */
+	
+	
+	
 	public static void pathFinding(short[][] pat, short[][] timepat) {
 		
 		/*for(int y=0;y<pat.length;y++) {
@@ -46,37 +37,22 @@ public class PathFinder {
 		System.out.println("Distance paths");
 		PathFinder.distancePaths=pathFinding(pat);
 		System.out.println("Distance Paths done");
-		while(threadPathFinder.isAlive()){
-
+		try {
+			while(threadPathFinder.isAlive()) {
+				
+					Thread.sleep(50);
+				
+			}
+		} catch (InterruptedException e) {
+			e.printStackTrace();
 		}
 	}
-
-	/**
-	 * Method with the algorithm for finding shortest/ cheapest paths
-	 * @param paths edge matrix
-	 * @return matrix storing paths
-	 */
+	
+	
 	private static Path[][] pathFinding(short[][] paths ) {
 		 final int size= paths.length;
 		
-		Path[][] result= new Path[size][size];
-		for(short y=0;y<size;y++) {
-			//okopirovani (pravidlo symetrie)
-			for(short x=0;x<y;x++) {
-				if(result[x][y]!=null) {
-					//reversed Path
-					result[y][x]=new Path(result[x][y]);
-				}
-			}
-			// z bodu x do x dojdu za 0 kroku
-			result[y][y]=new Path(y,y,(short)0);
-			// vytvareni novych cest
-			for(short x=(short) (y+1);x<size;x++) {
-				if(paths[y][x]!=0){
-					result[y][x]=new Path(y,x,paths[y][x]);
-				}
-			}
-		}
+		 Path[][] result= PathsInitialization(paths);
 		
 		
 		////////////////////////////////////////////////////////////
@@ -96,54 +72,78 @@ public class PathFinder {
 				}
 			}
 			//cesty z vrcholu actualPoint (i prvku uz je hotovo) do ostatnich vrcholu --
-			int actualPoint=j;
-			for(short i=j;i<size;i++){
-				
-				//TODO
-				//hledani nejmensiho ohodnoceni pro dalsi krok
-				short minimal=0;
-				for(short index=j; index<size;index++) {
-					if(result[j][index]!=null && !done[index]) {
-						if(minimal==0 || minimal>result[j][index].getValue()) {
-							minimal=result[j][index].getValue();
-							actualPoint=index;
-						}
-					}
-				}
-				done[actualPoint]=true;
-				
-				// uz zname nejkratsi cestu 
-				// ted porovnat jestli neexistuje kratsi cesta k x prvku
-				for(short x=0;x<size;x++) {
-					if(!done[x] && paths[actualPoint][x]!=0) {
-						if(result[j][x]==null|| //(result[j][x].getValue()>0 &&
-								(result[j][actualPoint].getValue()+paths[actualPoint][x])
-								<result[j][x].getValue()) {
-							Path cest=result[j][actualPoint];
-							result[j][x]=new Path(new ArrayList<Short>(cest.getNodeIDs()),cest.getValue());
-							result[j][x].addNode(x, paths[actualPoint][x]);
-						}
-					}
-				}	
-			}
+			dijkstraAlgorithm(result, done, j, paths);
 		}
 		
 		
 		return result;
 	}
-
-	/**
-	 * Distance path getter
-	 * @return matrix storing paths
-	 */
+	
+	
+	private static Path[][] PathsInitialization(short[][] paths) {
+		final int size= paths.length;
+		Path[][] result= new Path[size][size];
+		
+		
+		for(short y=0;y<size;y++) {
+			//okopirovani (pravidlo symetrie)
+			for(short x=0;x<y;x++) {
+				if(result[x][y]!=null) {
+					//reversed Path
+					result[y][x]=new Path(result[x][y]);
+				}
+			}
+			// z bodu x do x dojdu za 0 kroku
+			result[y][y]=new Path(y,y,(short)0);
+			// vytvareni novych cest
+			for(short x=(short) (y+1);x<size;x++) {
+				if(paths[y][x]!=0)
+					result[y][x]=new Path(y,x,paths[y][x]);
+			}
+		}
+		return result;
+		
+		
+	}
+	
+	private static void dijkstraAlgorithm(Path[][] result, boolean[] done, short j, short[][] paths) {
+		final int size= result.length;
+		int actualPoint=j;
+		for(short i=j;i<size;i++){
+			
+			//TODO
+			//hledani nejmensiho ohodnoceni pro dalsi krok
+			short minimal=0;
+			for(short index=j; index<size;index++) {
+				if(result[j][index]!=null && !done[index]) {
+					if(minimal==0 || minimal>result[j][index].getValue()) {
+						minimal=result[j][index].getValue();
+						actualPoint=index;
+					}
+				}
+			}
+			done[actualPoint]=true;
+			
+			// uz zname nejkratsi cestu 
+			// ted porovnat jestli neexistuje kratsi cesta k x prvku
+			for(short x=0;x<size;x++) {
+				if(!done[x] && paths[actualPoint][x]!=0) {
+					if(result[j][x]==null|| //(result[j][x].getValue()>0 &&
+							(result[j][actualPoint].getValue()+paths[actualPoint][x])
+							<result[j][x].getValue()) {
+						Path cest=result[j][actualPoint];
+						result[j][x]=new Path(new ArrayList<Short>(cest.getNodeIDs()),cest.getValue());
+						result[j][x].addNode(x, paths[actualPoint][x]);
+					}
+				}
+			}	
+		}
+	}
+	
+	
  	public static Path[][] getDistancePaths() {
 		return distancePaths;
 	}
-
-	/**
-	 * Time path getter
-	 * @return matrix storing paths
-	 */
  	public static Path[][] getTimePaths() {
 		return timePaths;
 	}
