@@ -15,16 +15,16 @@ import objects.Pomocna;
 
 public class Simulation {
 
-	private static final int MINUTES_IN_DAY = 1440;
-	private static final int START_OF_ORDERING_IN_MIN = 360;
-	private static final int END_OF_ORDERING_IN_MIN = 1080;
+	public static final int MINUTES_IN_DAY = 1440;
+	public static final int START_OF_ORDERING_IN_MIN = 360;
+	public static final int END_OF_ORDERING_IN_MIN = 1080;
 	
 	private int numDay=1;
 	
 	
 	
 	
-	private Random rand= new Random();
+	private static final Random RAND= new Random();
 	
 	/** List of mansions */
 	public List<AMansion> nodes;
@@ -43,11 +43,11 @@ public class Simulation {
 	 */
 	public boolean distanceXorTime=false;
 	
-	private static Pomocna matrix;
+	private  final Pomocna matrix;
 	/** Distance paths */
-	public static Path[][] distancePath;
+	public  final Path[][] distancePath;
 	/** Time paths */
-	public static Path[][] timePathInMin;
+	public final Path[][] timePathInMin;
 	
 	private LinkedList<Order>[] ordersToDo=new LinkedList[6];
 	
@@ -67,15 +67,15 @@ public class Simulation {
 	 * @param distancePaths distance paths
 	 * @param timePaths time paths
 	 */
-	@SuppressWarnings("static-access")
 	public Simulation(List<AMansion> g,Pomocna matrix,Path[][] distancePaths, Path[][] timePaths) {
-		this.nodes=g;
 		this.matrix=matrix;
+		this.distancePath=distancePaths;
+		this.timePathInMin=timePaths;
+		
+		this.nodes=g;
 		for(int i=0;i<ordersToDo.length;i++) {
 			ordersToDo[i]=new LinkedList<Order>();
 		}
-		this.distancePath=distancePaths;
-		this.timePathInMin=timePaths;
 	}
 	 
 
@@ -87,7 +87,6 @@ public class Simulation {
 		File f = new File("statistics.xml");
 		f.delete();
 		FileIO.startStatistics(null);
-		//if (dobaCekani <= 0) dobaCekani=300;
 		Thread vlaknoSimulace = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -138,7 +137,9 @@ public class Simulation {
 
 
 	private void simulationStep() {
-		if(actualTimeinMin>=MINUTES_IN_DAY)nextDay();
+		if(actualTimeinMin>=MINUTES_IN_DAY) {
+			nextDay();
+		}
 		
 
 		if(actualTimeinMin-lastCheckInMin>=5) {
@@ -167,18 +168,7 @@ public class Simulation {
 			if(actualTimeinMin>=START_OF_ORDERING_IN_MIN&&actualTimeinMin< Mansion.DEFAULT_END_OF_OPENING_IN_MIN) {
 				
 					if(actualTimeinMin<END_OF_ORDERING_IN_MIN) {
-						double chance= (((1/LAMBDA)*Math.exp(-orderingTimesDone/LAMBDA)))*1000;
-						for(int i = 1; i < matrix.mansionQuantity(); i++) {
-							if(((Mansion)nodes.get(i)).canOrder()){
-								int chancePoint = rand.nextInt(1000);
-								if(chancePoint<=chance) {
-									Mansion orderingMansion = (Mansion) nodes.get(i);
-									int amouth= getRandomAmouth(orderingMansion.size);
-									ordersToDo[amouth-1].add(new Order(orderingMansion,amouth));
-									
-							}
-							}
-						}
+						generateRandomOrders();
 						orderingTimesDone++;
 					}
 					System.out.println("Number of orders: "+getCountOfOrders());
@@ -194,6 +184,21 @@ public class Simulation {
 			
 	}
 	
+	private void generateRandomOrders() {
+		double chance= (((1/LAMBDA)*Math.exp(-orderingTimesDone/LAMBDA)))*1000;
+		for(int i = 1; i < matrix.mansionQuantity(); i++) {
+			if(((Mansion)nodes.get(i)).canOrder()){
+				int chancePoint = RAND.nextInt(1000);
+				if(chancePoint<=chance) {
+					Mansion orderingMansion = (Mansion) nodes.get(i);
+					int amouth= getRandomAmouth(orderingMansion.size);
+					ordersToDo[amouth-1].add(new Order(orderingMansion,amouth, false));
+					
+			}
+			}
+		}
+	}
+	
 	private int getCountOfOrders() {
 		int result = 0;
 		for(int i=0; i < ordersToDo.length; i++) {
@@ -207,16 +212,36 @@ public class Simulation {
 		for(int i=1, addChance=25; i < size; i++, addChance-=5) {
 			chance+=addChance;
 		}
-		int result= rand.nextInt(chance);
+		int result= RAND.nextInt(chance);
 		
-		if(result < 26)return 1;
-		else if(result < 51)return 2;
-		else if(result < 71)return 3;
-		else if(result < 86)return 4;
-		else if(result < 96)return 5;
-		else return 6;
+		if(result < 26) {
+			return 1;
+		}
+		else if(result < 51) {
+			return 2;
+		}
+		else if(result < 71) {
+			return 3;
+		}
+		else if(result < 86) {
+			return 4;
+		}
+		else if(result < 96) {
+			return 5;
+		}
+		else {
+			return 6;
+		}
 		
 	}
+	/**
+	 * method serves to inform others about actual day of the simulation
+	 * @return actual day of sim
+	 */
+	public int getActualDay() {
+		return numDay;
+	}
+	
 	
 	
 	private void launchAllTrucks() {
@@ -238,50 +263,20 @@ public class Simulation {
 			int loadingTime = (index+1)*Truck.UNLOAD_TIME_IN_MIN;
 			int aproxSetOnRoad= actualTimeinMin+loadingTime;
 			
-			if(ordersToDo[index].isEmpty())continue;
+			if(ordersToDo[index].isEmpty()) {
+				continue;
+			}
 			for(int ind=ordersToDo[index].size()-1;ind>=0;ind--) {
 			
-				//TODO error
 				if(ind >= ordersToDo[index].size()) {
 					ind = ordersToDo[index].size()-1;
 				}
 				Mansion o = ordersToDo[index].get(ind).getSubscriber();
-				//TODO jakto ze je hodnota zaporna?
 				int aproxTime= aproxSetOnRoad + timePathInMin[0][o.ID].getValue();
 				
-				//System.out.println(aproxTime+"/"+(o.openingTimeInMin)
-				//		+"-"+(o.openingTimeInMin+Mansion.OPENED_TIME_IN_MIN));
-				//counting in minutes
 				if((aproxTime) < (o.openingTimeInMin+Mansion.OPENED_TIME_IN_MIN)
 						&& o.openingTimeInMin <= aproxTime) {
-					//System.out.println("yes");
-					Order o1 = ordersToDo[index].get(ind);
-					assignOrderToTruck(o1);
-					LinkedList<Order> list= null;
-					//after unloading package
-					int aproxTimeWhenDone = aproxTime+loadingTime;
-					o1.setProbableTime(aproxTimeWhenDone);
-					switch(index) {
-						case 5: break;
-						case 4:
-							list=additionalOrders(1, o.ID,aproxTimeWhenDone);
-							break;
-						case 3:
-							list=additionalOrders(2, o.ID,aproxTimeWhenDone);
-							break;
-						case 2:
-							list=additionalOrders(3, o.ID,aproxTimeWhenDone);
-							break;
-						case 1:
-							list=additionalOrders(4, o.ID,aproxTimeWhenDone);
-							break;
-						case 0:
-							list=additionalOrders(5, o.ID,aproxTimeWhenDone);
-							break;
-					}
-					if(list!=null) {
-						list.stream().forEach(ord -> assignOrderToTruck(ord));
-					}
+					prepareOrdersList(index, ind, aproxTime, loadingTime, o);
 					if(ordersToDo[index].isEmpty()) {
 						break;
 					}
@@ -293,20 +288,51 @@ public class Simulation {
 		}
 	}
 	
-	private LinkedList<Order> additionalOrders(int neededSize, int pointID, int aproxtime) {
-		LinkedList<Order> result= new LinkedList<Order>();
-		//TODO otestovat 
+	private void prepareOrdersList(int index, int ind, int aproxTime, int loadingTime, Mansion o) {
+		Order o1 = ordersToDo[index].get(ind);
+		assignOrderToTruck(o1);
+		//after unloading package
+		int aproxTimeWhenDone = aproxTime+loadingTime;
+		o1.setProbableTime(aproxTime);
+		switch(index) {
+			case 5: break;
+			case 4:
+				additionalOrders(1, o.ID,aproxTimeWhenDone);
+				break;
+			case 3:
+				additionalOrders(2, o.ID,aproxTimeWhenDone);
+				break;
+			case 2:
+				additionalOrders(3, o.ID,aproxTimeWhenDone);
+				break;
+			case 1:
+				additionalOrders(4, o.ID,aproxTimeWhenDone);
+				break;
+			case 0:
+				additionalOrders(5, o.ID,aproxTimeWhenDone);
+				break;
+			default:
+				System.out.println("Tu se nikdy nedostaneme");
+				return;
+		}
+	}
+	
+	private void additionalOrders(int neededSize, int pointID, int aproxtime) {
 		int orderIndex=neededSize-1;
 		while(orderIndex >= 0 && neededSize > 0) {
 			//bs to look for bigger orders if size is smaller 
-			if(orderIndex >= neededSize) orderIndex=neededSize-1;
+			if(orderIndex >= neededSize) {
+				orderIndex=neededSize-1;
+			}
 			//No orders left, lets try "smaller" orders
 			if(ordersToDo[orderIndex].size() == 0) {
 				orderIndex--;
 				continue;
 			}
 		Order o=null;
-			if(distanceXorTime) o=findClosePointWithOrder(pointID, orderIndex,distancePath, aproxtime);
+			if(distanceXorTime) {
+				o=findClosePointWithOrder(pointID, orderIndex,distancePath, aproxtime);
+			}
 			else o=findClosePointWithOrder(pointID, orderIndex,timePathInMin, aproxtime);
 		if(o == null) {
 			orderIndex--;
@@ -315,13 +341,12 @@ public class Simulation {
 			aproxtime+= (orderIndex+1)*Truck.UNLOAD_TIME_IN_MIN*2+timePathInMin[pointID][o.getSubscriber().ID].getValue() ;
 			o.setProbableTime(aproxtime);
 			pointID=o.getSubscriber().ID;
-			result.add(o);
+			assignOrderToTruck(o);
 			neededSize-=(orderIndex+1);
 		}
 		
 
 		}
-		return result;
 	}
 	
 	
@@ -334,21 +359,26 @@ public class Simulation {
 		
 		for(int i=velikost-1;i>=0;i--) {
 			Mansion m=ordersToDo[orderSize].get(i).getSubscriber();
-			
-			if(result==null||path[startPoint][m.ID].getValue()<minValue) {
-
-				if((aproxtime) < (m.openingTimeInMin+Mansion.OPENED_TIME_IN_MIN)
-							&& m.openingTimeInMin >= aproxtime) {
-					result=ordersToDo[orderSize].get(i);
+			try {
+				if(result==null||path[startPoint][m.ID].getValue()<minValue&&
+						(aproxtime) < (m.openingTimeInMin+Mansion.OPENED_TIME_IN_MIN)
+								&& m.openingTimeInMin >= aproxtime) {
+						result=ordersToDo[orderSize].get(i);
+					
 				}
-			}	
+			}catch(NullPointerException e) {
+				//System.out.println("Neexistuje cesta do "+startPoint+" a "+m.ID);
+			}
+				
 		}
 		return result;
 		
 	}
 	
 	private void assignOrderToTruck(Order o) {
-		if(o==null)return;
+		if(o==null) {
+			return;
+		}
 		
 		//System.out.println("assigning orders");
 		if(Truck.launchableTrucks.isEmpty()) {
@@ -356,7 +386,6 @@ public class Simulation {
 			try {
 				t.addOrder(o);
 			} catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			ordersToDo[o.getAmount()-1].remove(o);
@@ -370,7 +399,6 @@ public class Simulation {
 					try {
 						t.addOrder(o);
 					} catch (Exception e) {
-						// TODO Auto-generated catch block
 						e.printStackTrace();
 					}
 					ordersToDo[o.getAmount()-1].remove(o);
@@ -387,11 +415,6 @@ public class Simulation {
 	}
 	
 
-	
-	
-	
-	
-	
 	private void nextDay() {
 		FileIO.writeStatistics(Truck.launchableTrucks, Truck.trucksOnRoad, this, null);
 		Mansion.nextDay(nodes);
@@ -402,11 +425,17 @@ public class Simulation {
 		Order.numberOfAllOrders =0;
 		numDay++;
 		System.out.println("Day "+numDay);
-		//TODO konec simulace?
-		//if(numDay>3)stopSimulation();
 		
 	}
 
+	//////// Other accesories
+	
+	
+	public void manualOrder(int size, int mansion) {
+		ordersToDo[size-1].add(new Order((Mansion)nodes.get(mansion+1),size, true));
+	}
+	
+	
 	/**
 	 * Returns day of the simulation
 	 * @return number of day
