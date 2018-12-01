@@ -1,0 +1,2 @@
+C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\functions\FileIO.java:21:	Jmeno tridy nezacina velkym pismenem.
+C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\functions\FileIO.java:137:	Nepouzivejte prazdne bloky if

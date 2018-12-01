@@ -1,12 +1,17 @@
 package simulation;
 
+import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import generation.*;
 import delivery.Order;
 import delivery.Truck;
+import functions.FileIO;
+import objects.AMansion;
+import objects.Mansion;
+import objects.Path;
+import objects.Pomocna;
 
 public class Simulation {
 
@@ -21,7 +26,7 @@ public class Simulation {
 	
 	private Random rand= new Random();
 	
-			
+	/** List of mansions */
 	public List<AMansion> nodes;
 	private int actualTimeinMin=330;
 	/**
@@ -39,7 +44,9 @@ public class Simulation {
 	public boolean distanceXorTime=false;
 	
 	private static Pomocna matrix;
+	/** Distance paths */
 	public static Path[][] distancePath;
+	/** Time paths */
 	public static Path[][] timePathInMin;
 	
 	private LinkedList<Order>[] ordersToDo=new LinkedList[6];
@@ -52,8 +59,14 @@ public class Simulation {
 	
 	//exponencialni rozdeleni
 		private static final double LAMBDA=300;
-	
-	
+
+	/**
+	 * Constructor creating simulation
+ 	 * @param g list of mansions
+	 * @param matrix matrix carrier
+	 * @param distancePaths distance paths
+	 * @param timePaths time paths
+	 */
 	@SuppressWarnings("static-access")
 	public Simulation(List<AMansion> g,Pomocna matrix,Path[][] distancePaths, Path[][] timePaths) {
 		this.nodes=g;
@@ -71,6 +84,9 @@ public class Simulation {
 	 * @param dobaCekani doba trvani jedne minuty simulace v ms
 	 */
 	public void runSimulation(int dobaCekani) {
+		File f = new File("statistics.xml");
+		f.delete();
+		FileIO.startStatistics(null);
 		//if (dobaCekani <= 0) dobaCekani=300;
 		Thread vlaknoSimulace = new Thread(new Runnable() {
 			@Override
@@ -98,9 +114,13 @@ public class Simulation {
 		vlaknoSimulace.start();
 	}
 
-	
+	/**
+	 * Ends simulation
+	 */
 	public void endSimulation() {
 		endSim=true;
+		FileIO.wholeSimAllTruckStats(null);
+		FileIO.endStatistics(null);
 	}
 	/**
 	 * pozastavi simulaci
@@ -115,9 +135,9 @@ public class Simulation {
 	public void resumeSim() {
 		stoped = false;
 	}
-	
-	
-	public void simulationStep() {
+
+
+	private void simulationStep() {
 		if(actualTimeinMin>=MINUTES_IN_DAY)nextDay();
 		
 
@@ -144,7 +164,7 @@ public class Simulation {
 			lastCheckInMin=actualTimeinMin;
 			System.out.print("TIME= "+minToHour(actualTimeinMin));
 			
-			if(actualTimeinMin>=START_OF_ORDERING_IN_MIN&&actualTimeinMin<Mansion.DEFAULT_END_OF_OPENING_IN_MIN) {
+			if(actualTimeinMin>=START_OF_ORDERING_IN_MIN&&actualTimeinMin< Mansion.DEFAULT_END_OF_OPENING_IN_MIN) {
 				
 					if(actualTimeinMin<END_OF_ORDERING_IN_MIN) {
 						double chance= (((1/LAMBDA)*Math.exp(-orderingTimesDone/LAMBDA)))*1000;
@@ -340,12 +360,12 @@ public class Simulation {
 				e.printStackTrace();
 			}
 			ordersToDo[o.getAmount()-1].remove(o);
+
 		}
 		
 		else {
-			Truck t=null;
 			while(!Truck.launchableTrucks.isEmpty()) {
-				t=Truck.launchableTrucks.peek();
+				Truck t=Truck.launchableTrucks.peek();
 				if(t.canLoad(o.getAmount())) {
 					try {
 						t.addOrder(o);
@@ -354,12 +374,13 @@ public class Simulation {
 						e.printStackTrace();
 					}
 					ordersToDo[o.getAmount()-1].remove(o);
+					return;
 				}else {
 					t.sendOnRoad(actualTimeinMin);
 				}
 				
 			}
-			if(t==null) {
+			if(Truck.launchableTrucks.isEmpty()) {
 				assignOrderToTruck(o);
 			}
 		}
@@ -371,18 +392,27 @@ public class Simulation {
 	
 	
 	
-	public void nextDay() {
+	private void nextDay() {
+		FileIO.writeStatistics(Truck.launchableTrucks, Truck.trucksOnRoad, this, null);
 		Mansion.nextDay(nodes);
 		Truck.nextDay();
 		actualTimeinMin=0;
 		lastCheckInMin=0;
 		
-		Order.NUM_OF_ALL_ORDERS=0;
+		Order.numberOfAllOrders =0;
 		numDay++;
 		System.out.println("Day "+numDay);
 		//TODO konec simulace?
 		//if(numDay>3)stopSimulation();
 		
+	}
+
+	/**
+	 * Returns day of the simulation
+	 * @return number of day
+	 */
+	public int getDay(){
+		return numDay;
 	}
 
 	private String minToHour(int min){
@@ -401,11 +431,9 @@ public class Simulation {
 				res += minutes + "\n";
 			}
 		} else {
-			res = min + " min.\n";
+			res = /*min + " min.\n";*/"0:0" + min + "\n";
 		}
 		return res;
 	}
-	
-	
 	
 }

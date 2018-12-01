@@ -1,0 +1,7 @@
+C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\functions\PathFinder.java:10:	Jmeno tridy nezacina velkym pismenem.
+C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\functions\PathFinder.java:49:	Nepouzivejte prazdne cykly while
+C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\functions\PathFinder.java:59:	Ruznych cest pruchodu metodou 'method()' je pathFinding(short), doporuceny limit je 200 (NPath complexity).
+C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\functions\PathFinder.java:59:	method 'pathFinding(short)' je prilis slozita (Cyclomatic Complexity of ).
+C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\functions\PathFinder.java:92:	Doporucujeme spojit dva prikazy if do jednoho se spojenim podminek.
+C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\functions\PathFinder.java:107:	Doporucujeme spojit dva prikazy if do jednoho se spojenim podminek.
+C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\functions\PathFinder.java:119:	Doporucujeme spojit dva prikazy if do jednoho se spojenim podminek.

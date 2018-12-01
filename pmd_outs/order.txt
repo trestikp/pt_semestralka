@@ -1,0 +1,3 @@
+C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\delivery\Order.java:12:	Prirazovat v konstruktoru hodnotu do promenne static, ktera neni final je nebezpecne (pri vytvoreni dalsi instance se prepise hodnota).
+C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\delivery\Order.java:15:	Identifikuje privatni atributy, ktere nikdy nemeni hodnotu po inicializaci v deklaraci atributu nebo v konstruktoru. Pomoc pri konverzi stavajicich trid do trid nemennych.
+C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\delivery\Order.java:17:	Identifikuje privatni atributy, ktere nikdy nemeni hodnotu po inicializaci v deklaraci atributu nebo v konstruktoru. Pomoc pri konverzi stavajicich trid do trid nemennych.

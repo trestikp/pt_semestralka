@@ -1,28 +1,42 @@
 package generation;
 
+import functions.FileIO;
+import objects.AMansion;
+import objects.Pomocna;
+
 import java.io.File;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Class for generating edges between mansions.
+ * @author Pavel Třeštík and Tomáš Ott
+ */
 public class PathGenerator {
 
-    private int MAX_SPEED = 120;
-    private int TIME=60;
+    /** Constant of the max speed a truck can travel */
+    private final int MAX_SPEED = 120;
+    /** Constant travel time */
+    private final int TIME=60;
     
-    
+    /** Distance edges of the graph */
     private short[][] distanceMatrix;
+    /** Time edges of the graph */
     private short[][] timeMatrix;
+    /** Mansions to which edges are generated */
     private List<AMansion> mansions;
+    /** Attribute of random */
     private Random rand;
-    private int pathType; //3 typy, 1 - 100%; 2 - 80%; 3 - 60% (speed @100% - 120km/h)
 
+    /**
+     * Constructor for edges generator
+     * @param mans collection of mansions
+     */
     public PathGenerator(List<AMansion> mans){
         this.mansions = mans;
         distanceMatrix = new short[mans.size()][mans.size()];
         timeMatrix = new short[mans.size()][mans.size()];
         rand = new Random();
-
-        //System.out.println(distanceMatrix.length);
 
         //long start = System.nanoTime();
         prepareMatrix();
@@ -31,10 +45,17 @@ public class PathGenerator {
         generatePaths();
     }
 
+    /**
+     * Overloaded constructor getting edges from file
+     * @param f file to read from
+     */
     public PathGenerator(File f){
         getPathsFromFile(f);
     }
 
+    /**
+     * Method that prepares the distance and time matrixes before data are generated to them
+     */
     private void prepareMatrix(){
         for(int i = 0; i < distanceMatrix.length; i++){
             for(int j = 0; j < distanceMatrix.length; j++){
@@ -48,6 +69,9 @@ public class PathGenerator {
         }
     }
 
+    /**
+     * Method that generates the edges. Generates both distance and time
+     */
     public void generatePaths(){
         int x;
         int type;
@@ -64,7 +88,7 @@ public class PathGenerator {
                         continue;
                     } else {
                         distance = (mansions.get(j).getDistance(mansions.get(x)) / Generator.multiplier);
-                        distanceMatrix[j][x] = (short) distance;  //mozne pomerne znatelne ztraty z pretypovani na double
+                        distanceMatrix[j][x] = (short) distance;
                         distanceMatrix[x][j] = (short) distance;
 
                         switch (type){
@@ -86,16 +110,28 @@ public class PathGenerator {
         }
     }
 
+    /**
+     * Method reading data from file
+     * @param f file with data
+     */
     public void getPathsFromFile(File f){
         Pomocna p = FileIO.importMatrix(f);
         distanceMatrix = p.getDistanceMatrix();
         timeMatrix = p.getTimeMatrix();
     }
 
+    /**
+     * Distance matrix getter.
+     * @return matrix of distance edges
+     */
     public short[][] getDistanceMatrix(){
         return distanceMatrix;
     }
 
+    /**
+     * Time matrix getter
+     * @return matrix of time edges
+     */
     public short[][] getTimeMatrix(){
         return  timeMatrix;
     }

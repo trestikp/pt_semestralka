@@ -1,0 +1,3 @@
+C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\graphics\GuiController.java:89:	Privatni metoda 'initialize()' neni nikde ve tride pouzita.
+C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\graphics\GuiController.java:514:	Identifikuje privatni atributy, ktere nikdy nemeni hodnotu po inicializaci v deklaraci atributu nebo v konstruktoru. Pomoc pri konverzi stavajicich trid do trid nemennych.
+C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\graphics\GuiController.java:514:	Identifikuje privatni atributy, ktere nikdy nemeni hodnotu po inicializaci v deklaraci atributu nebo v konstruktoru. Pomoc pri konverzi stavajicich trid do trid nemennych.

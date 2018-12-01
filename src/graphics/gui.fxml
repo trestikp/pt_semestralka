@@ -18,15 +18,10 @@
                   <MenuItem mnemonicParsing="false" onAction="#exportToFiles" text="Export data" />
                 </items>
             </Menu>
-            <Menu mnemonicParsing="false" text="Statistics">
-                <items>
-                    <MenuItem mnemonicParsing="false" onAction="#exportStatistics" text="Export statistics" />
-                </items>
-            </Menu>
             <Menu mnemonicParsing="false" text="Help">
                 <items>
                     <MenuItem mnemonicParsing="false" onAction="#about" text="About" />
-                  <MenuItem mnemonicParsing="false" onAction="#instructions" text="Unspecified Action" />
+                  <MenuItem mnemonicParsing="false" onAction="#instructions" text="Instructions" />
                 </items>
             </Menu>
         </menus>
@@ -80,6 +75,11 @@
                                     <HBox minHeight="25.0" minWidth="300.0" prefHeight="37.0" prefWidth="400.0">
                                         <children>
                                             <Button fx:id="pauseBtn" minWidth="80.0" mnemonicParsing="false" onAction="#pauseAction" text="Pause" />
+                                    <Button minWidth="115.0" mnemonicParsing="false" onAction="#showVis" text="Show visualization">
+                                       <HBox.margin>
+                                          <Insets left="100.0" />
+                                       </HBox.margin>
+                                    </Button>
                                         </children>
                                     </HBox>
                                     <HBox minHeight="25.0" minWidth="300.0" prefHeight="37.0" prefWidth="400.0">

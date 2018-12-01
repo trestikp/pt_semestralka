@@ -1,0 +1,2 @@
+C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\generation\PathGenerator.java:45:	Konstruktor vola metodu, ktera muze byt prekryta.
+C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\generation\PathGenerator.java:53:	Konstruktor vola metodu, ktera muze byt prekryta.

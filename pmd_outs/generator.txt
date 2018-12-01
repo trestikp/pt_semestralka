@@ -1,0 +1,5 @@
+C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\generation\Generator.java:48:	Identifikuje privatni atributy, ktere nikdy nemeni hodnotu po inicializaci v deklaraci atributu nebo v konstruktoru. Pomoc pri konverzi stavajicich trid do trid nemennych.
+C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\generation\Generator.java:76:	Konstruktor vola metodu, ktera muze byt prekryta.
+C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\generation\Generator.java:81:	Konstruktor vola metodu, ktera muze byt prekryta.
+C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\generation\Generator.java:170:	V hlavicce konstruktoru ci metody by se nemela vyhazovat vyjimka Exception, ale konkretni potomek
+C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\generation\Generator.java:170:	method 'generateMansions()' je prilis slozita (Cyclomatic Complexity of ).

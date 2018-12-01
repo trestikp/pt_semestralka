@@ -1,7 +1,10 @@
 package graphics;
 
 import delivery.Truck;
-import generation.*;
+import functions.FileIO;
+import functions.PathFinder;
+import generation.Generator;
+import generation.PathGenerator;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -11,6 +14,10 @@ import javafx.scene.control.*;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.util.StringConverter;
+import objects.AMansion;
+import objects.HQ;
+import objects.Mansion;
+import objects.Pomocna;
 import simulation.Simulation;
 
 import java.io.File;
@@ -18,49 +25,66 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 
+/**
+ * Class controlling components of GUI
+ * @author Pavel Třeštík and Tomáš Ott
+ */
 public class GuiController {
     /** Simulation speed in [ms]. Default value = 20ms */
     private int simulation_speed;
-
-    //private ObservableList<Truck> trucks;
-
-    //private ObservableList<AMansion> mansions;
-
+    /** Logical variables determining if data were imported or generated */
     private boolean mansionsImported = false, matrixesImported = false, dataGenerated = false;
 
+    /** TextArea to which console is redirected */
     @FXML
     private TextArea consoleLog;
 
+    /** TextArea to which info about truck/ mansion is displayed */
     @FXML
     private TextArea infoLog;
 
+    /** TextField where number of mansions to generate is inputted */
     @FXML
     private TextField manCount;
 
+    /** TextField where speed of simulation is inputted */
     @FXML
     private TextField simSpeed;
 
+    /** Button that starts the simulation */
     @FXML
     private Button startBtn;
 
+    /** Button that pauses the simulation */
     @FXML
     private Button pauseBtn;
 
+    /** Button that stops the simulation */
     @FXML
     private Button stopBtn;
 
+    /** Button that resumes the simulation */
     @FXML
     private Button resumeBtn;
 
+    /** ComboBox to choose truck for displaying information */
     @FXML
     private ComboBox<Truck> truckCombo;
 
+    /** ComboBox to choose mansion for displaying information */
     @FXML
     private ComboBox<AMansion> manCombo;
 
+    /**
+     * Empty constructor
+     */
     public GuiController(){
+        //neni pouzit, protoze neni potreba, jedna se o controller ke gui takze zbytek obstara metoda initialize
     }
 
+    /**
+     * Method for initialization
+     */
     @FXML
     private void initialize(){
         stopBtn.setDisable(true);
@@ -71,44 +95,11 @@ public class GuiController {
         tac.start();
     }
 
+    /**
+     * Action of start button
+     */
     @FXML
     public void startAction(){
-        //boolean run = false;
-        //boolean canRun = false;
-        //manCombo.setValue(null);
-        //truckCombo.setValue(null);
-        /*
-        if(dataGenerated){
-            run = true;
-        } else {
-            if(mansionsImported){
-                if(matrixesImported){
-                    System.out.println("\n--------------Start of finding Paths--------------\n");
-                    PathFinder.pathFinding(GUI.distanceMatrix, GUI.timeMatrix);
-                    System.out.println("\n--------------End of finding Paths--------------\n");
-                    canRun = true;
-                } else {
-                    GUI.p = new PathGenerator(GUI.mansions);
-                    System.out.println("Matrixes not imported! Starting generating new roads.");
-                    long start = System.nanoTime();
-                    GUI.p.generatePaths();
-                    long end = System.nanoTime();
-                    System.out.println("\n Finished generating roads in: " + (end/1000000 -start/1000000) + "ms\n");
-                    GUI.distanceMatrix = GUI.p.getDistanceMatrix();
-                    GUI.timeMatrix = GUI.p.getTimeMatrix();
-                    System.out.println("\n--------------Start of generating Paths--------------\n");
-                    PathFinder.pathFinding(GUI.distanceMatrix, GUI.timeMatrix);
-                    System.out.println("\n--------------End of generating Paths--------------\n");
-                    canRun = true;
-                }
-                GUI.sim = new Simulation(GUI.mansions,new Pomocna(GUI.distanceMatrix,GUI.timeMatrix),
-                        PathFinder.getDistancePaths(),PathFinder.getTimePaths());
-            } else {
-                System.out.println("Please import or generate data!");
-                return;
-            }
-        }*/
-
         if(!dataGenerated){
             if(matrixesImported && mansionsImported){
                 System.out.println("\n--------------Start of finding Paths--------------\n");
@@ -156,9 +147,6 @@ public class GuiController {
                     return;
                 } else {
                     simulation_speed = Integer.parseInt(simSpeed.getText());
-                    //if(canRun){
-                    //    run = true;
-                    //}
                 }
             } catch (NumberFormatException e){
                 System.out.println("Not a valid number! Please enter a whole number.");
@@ -168,19 +156,10 @@ public class GuiController {
             //System.out.println("CAS SIM: " + simulation_speed);
         } else {
             simulation_speed = 20;
-            //if(canRun){
-            //    run = true;
-            //}
-
-            //System.out.println("CAS SIM: " + simulation_speed);
         }
-
-        //if(run){
             setManComboBox();
             Thread sim = new Thread(() -> {
                 GUI.sim.runSimulation(simulation_speed);
-                //System.setOut(ps);
-                //System.setErr(ps);
                 try{
                     Thread.sleep(2);
                 }
@@ -189,21 +168,27 @@ public class GuiController {
                 }
             });
             sim.start();
-        //}
 
         stopBtn.setDisable(false);
         pauseBtn.setDisable(false);
         startBtn.setDisable(true);
     }
 
+    /**
+     * Action of resume button
+     */
     @FXML
     public void resumeAction() {
         GUI.sim.resumeSim();
+        //GUI.sim.runSimulation(simulation_speed);
         pauseBtn.setDisable(false);
         stopBtn.setDisable(false);
         resumeBtn.setDisable(true);
     }
 
+    /**
+     * Action of stop button
+     */
     @FXML
     public void stopAction() {
         GUI.sim.endSimulation();
@@ -212,13 +197,16 @@ public class GuiController {
         resumeBtn.setDisable(true);
         pauseBtn.setDisable(true);
         stopBtn.setDisable(true);
-        GUI.dataReset();
         dataInfoReset();
     }
 
+    /**
+     * Action of pause button
+     */
     @FXML
     public void pauseAction() {
         GUI.sim.pauseSim();
+        //GUI.sim.endSimulation();
         setTruckComboBox();
         resumeBtn.setDisable(false);
         startBtn.setDisable(true);
@@ -226,8 +214,12 @@ public class GuiController {
         pauseBtn.setDisable(true);
     }
 
+    /**
+     * Action of generate button
+     */
     @FXML
     public void generate(){
+        GUI.dataReset();
         startBtn.setDisable(false);
         truckCombo.setValue(null);
         manCombo.setValue(null);
@@ -253,6 +245,9 @@ public class GuiController {
         dataGenerated = true;
     }
 
+    /**
+     * Method to set up truck combo box
+     */
     private void setTruckComboBox(){
         ObservableList<Truck> trucks = FXCollections.observableArrayList(Truck.trucksOnRoad);
         truckCombo.setItems(trucks);
@@ -277,6 +272,9 @@ public class GuiController {
         });
     }
 
+    /**
+     * Method to set up mansion combo box
+     */
     private void setManComboBox(){
         ObservableList<AMansion> mansions = FXCollections.observableArrayList(GUI.mansions);
         manCombo.setItems(mansions);
@@ -309,8 +307,12 @@ public class GuiController {
         });
     }
 
+    /**
+     * Action for import mansions option from menu
+     */
     @FXML
     public void importMansions() {
+        GUI.mansions = null;
         FileChooser fc = new FileChooser();
         fc.setTitle("Choose mansion source");
         File f = fc.showOpenDialog(consoleLog.getScene().getWindow());
@@ -327,8 +329,13 @@ public class GuiController {
         startBtn.setDisable(false);
     }
 
+    /**
+     * Action for import matrixes option from menu
+     */
     @FXML
     public void importMatrixes() {
+        GUI.timeMatrix = null;
+        GUI.distanceMatrix = null;
         FileChooser fc = new FileChooser();
         fc.setTitle("Choose matrixes source");
         File f = fc.showOpenDialog(consoleLog.getScene().getWindow());
@@ -346,6 +353,9 @@ public class GuiController {
         }
     }
 
+    /**
+     * Action for export option from menu
+     */
     @FXML
     public void exportToFiles() {
         DirectoryChooser dc = new DirectoryChooser();
@@ -371,19 +381,25 @@ public class GuiController {
         }
     }
 
-    @FXML
-    public void exportStatistics() {
-    }
-
+    /**
+     * Action for instruction option from menu
+     */
     @FXML
     public void instructions() {
+        GUI.instructionStage();
     }
 
+    /**
+     * Action for about option from menu
+     */
     @FXML
-    public void about() throws Exception{
+    public void about(){
         GUI.aboutUsStage();
     }
 
+    /**
+     * Method that resets data about GUI
+     */
     private void dataInfoReset(){
         dataGenerated = false;
         matrixesImported = false;
@@ -392,17 +408,31 @@ public class GuiController {
     }
 
     /**
+     * Action for show visualization button
+     */
+    public void showVis() {
+        GUI.showVisualization();
+    }
+
+    /**
      * Class used to redirect console output stream to the GUI TextArea.
      */
     class TextAreaConsole {
+        /** Constant size of the buffer */
         private static final int STRING_BUFFER = 4096;
+        /** Constant size of flush interval */
         private static final int FLUSH_INT = 200;
+        /** Constant size of text displayed on the output */
         private static final int MAX_TEXT_LEN = 256 * 2048; //256 znaku na radce, 2048 radek - dal se deli 2, takze realne jen 1024 radek (lepsi, rychlejsi)
 
+        /** TextArea to which the console is redirected */
         private final TextArea textArea;
+        /** StringBuffer which contains the text of the "console" */
         private final StringBuffer write = new StringBuffer();
 
-
+        /**
+         * The thread for writing the text to TextArea
+         */
         private final Thread writeThread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -417,9 +447,20 @@ public class GuiController {
             }
         });
 
+        /**
+         * Output stream that writes the text
+         */
         private final OutputStream out = new OutputStream() {
+            /**
+             * Text to be written
+             */
             private final byte buffer[] = new byte[STRING_BUFFER];
 
+            /**
+             * Overriden method writing a single char
+             * @param b char to write
+             * @throws IOException
+             */
             @Override
             public void write(int b) throws IOException {
                 if(pos == STRING_BUFFER){
@@ -429,6 +470,13 @@ public class GuiController {
                 pos++;
             }
 
+            /**
+             * Overriden method writing multiple characters
+             * @param b byte array of charactes
+             * @param off start of the text
+             * @param len length of the text
+             * @throws IOException
+             */
             @Override
             public void write(byte[] b, int off, int len) throws IOException {
                 if(pos + len < STRING_BUFFER){
@@ -444,6 +492,10 @@ public class GuiController {
                 }
             }
 
+            /**
+             * Overriden method that flushes the text
+             * @throws IOException
+             */
             @Override
             public void flush() throws IOException {
                 synchronized (write){
@@ -453,11 +505,18 @@ public class GuiController {
             }
         };
 
+        /** Logical run attribute */
         private boolean running = false;
+        /** Length of the text*/
         private int pos = 0;
 
+        /** Stream storing original outputs */
         private PrintStream defErr, defOut;
 
+        /**
+         * Constructor
+         * @param textArea new output
+         */
         public TextAreaConsole(TextArea textArea){
             this.textArea = textArea;
             defErr = System.err;
@@ -465,6 +524,9 @@ public class GuiController {
             writeThread.setDaemon(true);
         }
 
+        /**
+         * Start of the redirection
+         */
         public void start() {
             PrintStream ps = new PrintStream(out, true);
             //System.setErr(ps);
@@ -473,6 +535,9 @@ public class GuiController {
             writeThread.start();
         }
 
+        /**
+         * Stop of the redirection
+         */
         public void stop(){
             running = false;
             System.setOut(defOut);
@@ -484,6 +549,9 @@ public class GuiController {
             }
         }
 
+        /**
+         * Method appends text to the end of the TextArea, used in flush
+         */
         private void appendText(){
             synchronized (write){
                 if(write.length() > 0){
