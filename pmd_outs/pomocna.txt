@@ -1,2 +1,0 @@
-C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\objects\Pomocna.java:11:	Identifikuje privatni atributy, ktere nikdy nemeni hodnotu po inicializaci v deklaraci atributu nebo v konstruktoru. Pomoc pri konverzi stavajicich trid do trid nemennych.
-C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\objects\Pomocna.java:12:	Identifikuje privatni atributy, ktere nikdy nemeni hodnotu po inicializaci v deklaraci atributu nebo v konstruktoru. Pomoc pri konverzi stavajicich trid do trid nemennych.

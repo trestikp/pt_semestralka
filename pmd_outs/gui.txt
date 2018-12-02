@@ -1,6 +1,0 @@
-C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\graphics\GUI.java:187:	Lokalni promenna 'scene' neni nikde v metode pouzita
-C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\graphics\GUI.java:195:	Ruznych cest pruchodu metodou 'method()' je drawVisualization(Stage), doporuceny limit je 200 (NPath complexity).
-C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\graphics\GUI.java:195:	method 'drawVisualization(Stage)' je prilis slozita (Cyclomatic Complexity of ).
-C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\graphics\GUI.java:282:	Formalni parametr metody 'scene' neni nikde v metode pouzity.
-C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\graphics\GUI.java:282:	Formalni parametr metody 't' neni nikde v metode pouzity.
-C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\graphics\GUI.java:282:	Privatni metoda 'drawTruckRoutes(Scene,Truck)' neni nikde ve tride pouzita.

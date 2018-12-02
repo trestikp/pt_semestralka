@@ -1,4 +1,0 @@
-C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\objects\Mansion.java:33:	Jmeno promenne vypada jako konstanta, ale nema prislusne modifikatory (final, static)
-C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\objects\Mansion.java:42:	Identifikuje privatni atributy, ktere nikdy nemeni hodnotu po inicializaci v deklaraci atributu nebo v konstruktoru. Pomoc pri konverzi stavajicich trid do trid nemennych.
-C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\objects\Mansion.java:44:	Pro oznaceni typu promenne nepouzivejte konkretni tridu 'LinkedList'; vhodnejsi je pouziti rozhrani.
-C:\Users\Pavel\Documents\GitHub\pt_semestralka\src\objects\Mansion.java:97:	Prikaz if..then..else je zbytecny, pokud se pouze vraci hodnota boolean.
