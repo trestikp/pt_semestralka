@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="400.0" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="graphics.ManualOrderController">
+   <children>
+      <HBox minHeight="400.0" minWidth="400.0" prefHeight="400.0" prefWidth="600.0" VBox.vgrow="ALWAYS">
+         <children>
+            <VBox minHeight="200.0" minWidth="200.0" prefHeight="200.0" prefWidth="300.0">
+               <children>
+                  <HBox minHeight="100.0" minWidth="200.0" prefHeight="100.0" prefWidth="300.0">
+                     <children>
+                        <Label minHeight="25.0" minWidth="80.0" text="Mansion">
+                           <HBox.margin>
+                              <Insets top="37.0" />
+                           </HBox.margin>
+                        </Label>
+                        <ComboBox fx:id="mansionCombo" minHeight="25.0" minWidth="100.0" prefHeight="25.0" prefWidth="150.0">
+                           <HBox.margin>
+                              <Insets top="37.0" />
+                           </HBox.margin>
+                        </ComboBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets left="10.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <HBox minHeight="100.0" minWidth="200.0" prefHeight="100.0" prefWidth="300.0">
+                     <children>
+                        <Label minHeight="25.0" minWidth="80.0" text="Pallet count">
+                           <HBox.margin>
+                              <Insets top="37.0" />
+                           </HBox.margin>
+                        </Label>
+                        <ComboBox fx:id="palletCombo" minHeight="25.0" minWidth="50.0" prefHeight="25.0" prefWidth="50.0">
+                           <HBox.margin>
+                              <Insets top="37.0" />
+                           </HBox.margin>
+                        </ComboBox>
+                     </children>
+                     <VBox.margin>
+                        <Insets left="10.0" />
+                     </VBox.margin>
+                  </HBox>
+                  <Button minHeight="50.0" minWidth="100.0" mnemonicParsing="false" onAction="#makeOrder" prefHeight="50.0" prefWidth="100.0" text="Make order">
+                     <VBox.margin>
+                        <Insets left="100.0" />
+                     </VBox.margin>
+                  </Button>
+               </children>
+            </VBox>
+            <TextArea fx:id="infoText" minHeight="200.0" minWidth="200.0" prefHeight="200.0" prefWidth="300.0" />
+         </children>
+      </HBox>
+   </children>
+</VBox>

@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.*?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox maxHeight="6000.0" maxWidth="8000.0" minHeight="400.0" minWidth="600.0" prefHeight="600.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="graphics.GuiController">
+<children>
+    <MenuBar minHeight="25.0" minWidth="600.0" prefHeight="25.0" prefWidth="800.0" VBox.vgrow="ALWAYS">
+        <menus>
+            <Menu mnemonicParsing="false" text="File">
+                <items>
+                    <MenuItem mnemonicParsing="false" onAction="#importMansions" text="Import mansions" />
+                  <MenuItem mnemonicParsing="false" onAction="#importMatrixes" text="Import matrixes" />
+                  <MenuItem mnemonicParsing="false" onAction="#exportToFiles" text="Export data" />
+                </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Help">
+                <items>
+                    <MenuItem mnemonicParsing="false" onAction="#about" text="About" />
+                  <MenuItem mnemonicParsing="false" onAction="#instructions" text="Instructions" />
+                </items>
+            </Menu>
+        </menus>
+    </MenuBar>
+    <HBox minHeight="400.0" minWidth="600.0" prefHeight="600.0" prefWidth="800.0" VBox.vgrow="ALWAYS">
+        <children>
+            <VBox minHeight="375.0" minWidth="300.0" prefHeight="575.0" prefWidth="400.0" HBox.hgrow="ALWAYS">
+                <children>
+                    <VBox minHeight="250.0" minWidth="300.0" prefHeight="350.0" prefWidth="400.0" VBox.vgrow="ALWAYS">
+                        <children>
+                            <VBox minHeight="75.0" minWidth="300.0" prefHeight="100.0" prefWidth="400.0">
+                                <children>
+                                    <Label minHeight="25.0" prefHeight="30.0" text="Controls " />
+                                    <Label minHeight="25.0" prefHeight="30.0" text="Generation: " />
+                                    <HBox minHeight="25.0" minWidth="300.0" prefHeight="30.0" prefWidth="400.0">
+                                        <children>
+                                            <Label minHeight="25.0" minWidth="115.0" prefHeight="25.0" text="Number to generate: " />
+                                            <TextField fx:id="manCount" promptText="2000">
+                                                <HBox.margin>
+                                                    <Insets left="5.0" />
+                                                </HBox.margin></TextField>
+                                            <Button minWidth="65.0" mnemonicParsing="false" onAction="#generate" text="Generate">
+                                                <HBox.margin>
+                                                    <Insets left="10.0" />
+                                                </HBox.margin></Button>
+                                        </children>
+                                    </HBox>
+                                </children>
+                                <padding>
+                                    <Insets left="5.0" />
+                                </padding>
+                            </VBox>
+                            <VBox minHeight="175.0" minWidth="300.0" prefHeight="250.0" prefWidth="400.0">
+                                <children>
+                                    <Label minHeight="25.0" prefHeight="37.0" text="Simulation: " />
+                                    <HBox minHeight="25.0" minWidth="300.0" prefHeight="37.0" prefWidth="400.0">
+                                        <children>
+                                            <Label minHeight="25.0" prefHeight="25.0" text="Simulation speed in [ms]" />
+                                            <TextField fx:id="simSpeed" minHeight="25.0" minWidth="50.0" prefWidth="50.0" promptText="20">
+                                                <HBox.margin>
+                                                    <Insets />
+                                                </HBox.margin>
+                                            </TextField>
+                                        </children>
+                                    </HBox>
+                                    <HBox minHeight="25.0" minWidth="300.0" prefHeight="37.0" prefWidth="400.0">
+                                        <children>
+                                            <Button fx:id="startBtn" minWidth="80.0" mnemonicParsing="false" onAction="#startAction" text="Start" />
+                                        </children>
+                                    </HBox>
+                                    <HBox minHeight="25.0" minWidth="300.0" prefHeight="37.0" prefWidth="400.0">
+                                        <children>
+                                            <Button fx:id="pauseBtn" minWidth="80.0" mnemonicParsing="false" onAction="#pauseAction" text="Pause" />
+                                    <Button minWidth="115.0" mnemonicParsing="false" onAction="#showVis" text="Show visualization">
+                                       <HBox.margin>
+                                          <Insets left="100.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                        </children>
+                                    </HBox>
+                                    <HBox minHeight="25.0" minWidth="300.0" prefHeight="37.0" prefWidth="400.0">
+                                        <children>
+                                            <Button fx:id="resumeBtn" minWidth="80.0" mnemonicParsing="false" onAction="#resumeAction" text="Resume" />
+                                    <Button fx:id="orderBtn" minWidth="115.0" mnemonicParsing="false" onAction="#makeManualOrder" text="Manual Order">
+                                       <HBox.margin>
+                                          <Insets left="100.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                        </children>
+                                    </HBox>
+                                    <HBox minHeight="25.0" minWidth="300.0" prefHeight="37.0" prefWidth="400.0">
+                                        <children>
+                                            <Button fx:id="stopBtn" minWidth="80.0" mnemonicParsing="false" onAction="#stopAction" text="Stop" />
+                                        </children>
+                                    </HBox>
+                                </children>
+                                <padding>
+                                    <Insets left="5.0" />
+                                </padding>
+                            </VBox>
+                        </children>
+                    </VBox>
+                    <VBox minHeight="150.0" minWidth="300.0" prefHeight="250.0" prefWidth="400.0" VBox.vgrow="ALWAYS">
+                        <children>
+                            <HBox minHeight="25.0" minWidth="300.0" prefHeight="25.0" prefWidth="400.0" VBox.vgrow="ALWAYS">
+                                <children>
+                                    <Label minHeight="25.0" text="Mansions: " HBox.hgrow="ALWAYS">
+                                        <padding>
+                                            <Insets left="5.0" />
+                                        </padding>
+                                    </Label>
+                                    <ComboBox fx:id="manCombo" minHeight="25.0" prefHeight="25.0" prefWidth="150.0" HBox.hgrow="ALWAYS" />
+                                </children>
+                            </HBox>
+                            <HBox minHeight="25.0" minWidth="300.0" prefHeight="25.0" prefWidth="400.0" VBox.vgrow="ALWAYS">
+                                <children>
+                                    <Label minHeight="25.0" text="Trucks: " HBox.hgrow="ALWAYS">
+                                        <padding>
+                                            <Insets left="5.0" />
+                                        </padding>
+                                    </Label>
+                                    <ComboBox fx:id="truckCombo" minHeight="25.0" prefHeight="25.0" prefWidth="150.0" HBox.hgrow="ALWAYS" />
+                                </children>
+                            </HBox>
+                            <VBox minHeight="75.0" minWidth="300.0" prefHeight="200.0" prefWidth="400.0" VBox.vgrow="ALWAYS">
+                                <children>
+                                    <Label minHeight="25.0" prefHeight="25.0" text="Information" VBox.vgrow="ALWAYS">
+                                        <padding>
+                                            <Insets left="5.0" />
+                                        </padding>
+                                    </Label>
+                                    <TextArea fx:id="infoLog" editable="false" minHeight="75.0" minWidth="300.0" prefHeight="175.0" prefWidth="400.0" />
+                                </children>
+                            </VBox>
+                        </children>
+                    </VBox>
+                </children>
+                <HBox.margin>
+                    <Insets />
+                </HBox.margin>
+            </VBox>
+            <VBox minHeight="375.0" minWidth="300.0" prefHeight="600.0" prefWidth="400.0" HBox.hgrow="ALWAYS">
+                <children>
+                    <Label minHeight="25.0" minWidth="80.0" prefHeight="25.0" prefWidth="80.0" text="Console log" VBox.vgrow="ALWAYS" />
+                    <TextArea fx:id="consoleLog" editable="false" minHeight="350.0" minWidth="300.0" prefHeight="550.0" prefWidth="400.0" VBox.vgrow="ALWAYS" />
+                </children>
+            </VBox>
+        </children>
+    </HBox>
+</children>
+</VBox>
