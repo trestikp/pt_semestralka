@@ -10,7 +10,7 @@ import functions.PathFinder;
 
 /**
  * Class of the mansions
- * @author Pavel TÅ™eÅ¡tÃ­k and TomÃ¡Å¡ Ott
+ * @author Pavel Tøeštík and Tomáš Ott
  */
 public class Mansion extends AMansion{
 
@@ -37,7 +37,9 @@ public class Mansion extends AMansion{
 
     /** Number of pallets to be delivered */
     private int numOfGoodsToBeDelivered=0;
-    
+
+    private int ordersMadeInADay= 0;
+
     /** Orders made */
     private Queue<Order> actualOrder = new LinkedList<Order>();
     /** Orders got */
@@ -61,9 +63,15 @@ public class Mansion extends AMansion{
      */
     public void orderToBeDelivered(Order o) {
     	actualOrder.add(o);
-    	
+    	System.out.println(o.getAmount());
     }    
 
+    public void orderCreated(int amount) {
+    	ordersMadeInADay++;
+    	numOfGoodsToBeDelivered+=amount;
+    	
+    }
+    
     /** Orders delivered */
     public void orderDelivered() {
     	if(actualOrder.isEmpty()){
@@ -83,6 +91,8 @@ public class Mansion extends AMansion{
         String res = "";
         res += "ID: " + ID + "\n";
         res += "Name: " + name + "\n";
+        res += "Size: " + size + "\n";
+        res += "Can order: " + getCanOrderNumber() + " pallets\n";
         res += "Location: [" + position.getX() + "," + position.getY() +"]\n";
         res += "Opening time: " + minToHour(openingTimeInMin) + "\n";
         res += "Distance to HQ: " + PathFinder.getDistancePaths()[0][ID].getValue() + "\n";
@@ -122,7 +132,11 @@ public class Mansion extends AMansion{
                 res += minutes;
             }
         } else {
-            res = min + " min.";
+            if(min < 10){
+                res = /*min + " min.\n";*/"0:0" + min + "\n";
+            }else {
+                res = /*min + " min.\n";*/"0:" + min + "\n";
+            }
         }
         return res;
     }
@@ -141,8 +155,18 @@ public class Mansion extends AMansion{
     public static void nextDay(List<AMansion> nodes) {
     	for(int i=1; i<nodes.size(); i++) {
     		((Mansion)nodes.get(i)).resetGoodsLimit();
+            ((Mansion)nodes.get(i)).ordersMadeInADay = 0;
     	}
     }
-    
+
+    public int getCanOrderNumber(){
+        int res = size-ordersMadeInADay;
+        if(res < 0){
+            System.out.println("Error");
+            return res;
+        } else {
+            return res;
+        }
+    }
     
 }
