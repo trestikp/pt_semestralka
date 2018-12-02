@@ -191,8 +191,9 @@ public class Simulation {
 				int chancePoint = RAND.nextInt(1000);
 				if(chancePoint<=chance) {
 					Mansion orderingMansion = (Mansion) nodes.get(i);
-					int amouth= getRandomAmouth(orderingMansion.size);
-					ordersToDo[amouth-1].add(new Order(orderingMansion,amouth, false));
+					int amount= Math.min(getRandomAmouth(orderingMansion.size),orderingMansion.getCanOrderNumber());
+					ordersToDo[amount-1].add(new Order(orderingMansion,amount, false));
+					orderingMansion.orderCreated(amount);
 					
 			}
 			}
